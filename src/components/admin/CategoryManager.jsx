@@ -3,6 +3,7 @@ import {
   getCategories,
   addCategory,
   deleteCategory,
+  updateCategory,
 } from "../../services/categoryService";
 import { useAuth } from "../../context/AuthContext";
 
@@ -11,6 +12,8 @@ export function CategoryManager() {
   const [newCategoryName, setNewCategoryName] = useState("");
   const [loading, setLoading] = useState(false);
   const [searchTerm, setSearchTerm] = useState("");
+  const [editingCategory, setEditingCategory] = useState(null);
+  const [editingName, setEditingName] = useState("");
   const { currentUser } = useAuth();
 
   useEffect(() => {
@@ -85,6 +88,58 @@ export function CategoryManager() {
     } catch (error) {
       alert("❌ Lỗi khi xóa danh mục: " + error.message);
     }
+  };
+
+  const handleEditCategory = (category) => {
+    setEditingCategory(category.id);
+    setEditingName(category.name);
+  };
+
+  const handleUpdateCategory = async (categoryId) => {
+    if (!editingName.trim()) {
+      alert("Vui lòng nhập tên danh mục!");
+      return;
+    }
+
+    if (
+      categories.find(
+        (cat) => 
+          cat.name.toLowerCase() === editingName.toLowerCase() && 
+          cat.id !== categoryId
+      )
+    ) {
+      alert("Tên danh mục này đã tồn tại!");
+      return;
+    }
+
+    try {
+      const updateData = {
+        name: editingName,
+        updatedAt: new Date(),
+        updatedBy: currentUser.email,
+      };
+
+      await updateCategory(categoryId, updateData);
+      
+      setCategories((prevCategories) =>
+        prevCategories.map((category) =>
+          category.id === categoryId
+            ? { ...category, ...updateData }
+            : category
+        )
+      );
+
+      setEditingCategory(null);
+      setEditingName("");
+      alert("✅ Danh mục đã được cập nhật thành công!");
+    } catch (error) {
+      alert("❌ Lỗi khi cập nhật danh mục: " + error.message);
+    }
+  };
+
+  const cancelEdit = () => {
+    setEditingCategory(null);
+    setEditingName("");
   };
 
   const clearSearch = () => {
@@ -174,22 +229,42 @@ export function CategoryManager() {
             filteredCategories.map((category) => (
               <div key={category.id} className="category-item">
                 <div className="category-info">
-                  <span className="category-name">
-                    {searchTerm
-                      ? // Highlight search term
-                        category.name
-                          .split(new RegExp(`(${searchTerm})`, "gi"))
-                          .map((part, index) =>
-                            part.toLowerCase() === searchTerm.toLowerCase() ? (
-                              <mark key={index} className="search-highlight">
-                                {part}
-                              </mark>
-                            ) : (
-                              part
+                  {editingCategory === category.id ? (
+                    <div className="edit-category-form">
+                      <input
+                        type="text"
+                        value={editingName}
+                        onChange={(e) => setEditingName(e.target.value)}
+                        className="form-control edit-input"
+                        placeholder="Nhập tên danh mục mới..."
+                        onKeyPress={(e) => {
+                          if (e.key === "Enter") {
+                            handleUpdateCategory(category.id);
+                          } else if (e.key === "Escape") {
+                            cancelEdit();
+                          }
+                        }}
+                        autoFocus
+                      />
+                    </div>
+                  ) : (
+                    <span className="category-name">
+                      {searchTerm
+                        ? // Highlight search term
+                          category.name
+                            .split(new RegExp(`(${searchTerm})`, "gi"))
+                            .map((part, index) =>
+                              part.toLowerCase() === searchTerm.toLowerCase() ? (
+                                <mark key={index} className="search-highlight">
+                                  {part}
+                                </mark>
+                              ) : (
+                                part
+                              )
                             )
-                          )
-                      : category.name}
-                  </span>
+                        : category.name}
+                    </span>
+                  )}
                   {category.isDefault && (
                     <span className="default-badge">Mặc định</span>
                   )}
@@ -199,14 +274,43 @@ export function CategoryManager() {
                   {category.createdBy && (
                     <span className="created-by">👤 {category.createdBy}</span>
                   )}
-                  {!category.isDefault && (
-                    <button
-                      onClick={() => handleDeleteCategory(category.id)}
-                      className="btn-delete-category"
-                      title="Xóa danh mục"
-                    >
-                      🗑️ Xóa
-                    </button>
+                  
+                  {editingCategory === category.id ? (
+                    <div className="edit-actions">
+                      <button
+                        onClick={() => handleUpdateCategory(category.id)}
+                        className="btn-save-category"
+                        title="Lưu thay đổi"
+                      >
+                        ✅ Lưu
+                      </button>
+                      <button
+                        onClick={cancelEdit}
+                        className="btn-cancel-edit"
+                        title="Hủy chỉnh sửa"
+                      >
+                        ❌ Hủy
+                      </button>
+                    </div>
+                  ) : (
+                    !category.isDefault && (
+                      <div className="action-buttons">
+                        <button
+                          onClick={() => handleEditCategory(category)}
+                          className="btn-edit-category"
+                          title="Chỉnh sửa danh mục"
+                        >
+                          ✏️ Sửa
+                        </button>
+                        <button
+                          onClick={() => handleDeleteCategory(category.id)}
+                          className="btn-delete-category"
+                          title="Xóa danh mục"
+                        >
+                          🗑️ Xóa
+                        </button>
+                      </div>
+                    )
                   )}
                 </div>
               </div>

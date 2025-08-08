@@ -6,6 +6,7 @@ import {
   getDocs,
   doc,
   deleteDoc,
+  updateDoc,
 } from "firebase/firestore";
 
 const defaultCategories = [{ id: "other", name: "Khác", isDefault: true }];
@@ -41,6 +42,32 @@ export const addCategory = async (categoryData) => {
     return docRef.id;
   } catch (error) {
     console.error("Error adding category:", error);
+    throw error;
+  }
+};
+
+export const updateCategory = async (id, categoryData) => {
+  try {
+    if (id === "other") {
+      throw new Error("Không thể chỉnh sửa danh mục mặc định");
+    }
+
+    console.log("Updating category - ID:", id);
+    console.log("Update data:", categoryData);
+    console.log("Current user:", auth.currentUser?.email);
+
+    await updateDoc(doc(db, "categories", id), categoryData);
+    console.log("✅ Category updated successfully");
+  } catch (error) {
+    console.error("❌ Error updating category:");
+    console.error("Error object:", error);
+    console.error("Error code:", error.code);
+    console.error("Error message:", error.message);
+
+    if (error.code === "permission-denied") {
+      console.error("PERMISSION DENIED - Check Firestore rules and user email");
+    }
+
     throw error;
   }
 };

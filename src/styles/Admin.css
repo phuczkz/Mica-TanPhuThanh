@@ -1252,11 +1252,6 @@ textarea.form-control {
     height: 140px;
   }
   
-  .admin-layout .no-image::before {
-    font-size: 24px;
-    margin-bottom: 6px;
-  }
-  
   .admin-layout .product-info {
     padding: 14px;
   }
@@ -1321,12 +1316,6 @@ textarea.form-control {
   .admin-layout .product-actions {
     padding: 0 12px 12px;
     gap: 8px;
-  }
-  
-  .admin-layout .product-actions .btn {
-    font-size: 10px;
-    padding: 10px 12px;
-    letter-spacing: 0.5px;
   }
 }
 
@@ -1819,6 +1808,8 @@ input[type="checkbox"]:checked + .checkmark {
   font-size: 12px;
   padding: 4px 8px;
   border-radius: 12px;
+  margin-bottom: 15px;
+  display: inline-block;
   font-weight: 600;
   text-transform: uppercase;
   letter-spacing: 0.5px;
@@ -2511,6 +2502,9 @@ input[type="checkbox"]:checked + .checkmark {
   transition: all 0.3s ease;
   text-transform: uppercase;
   letter-spacing: 0.5px;
+  display: flex;
+  align-items: center;
+  gap: 4px;
 }
 
 .btn-delete-category:hover {
@@ -2989,5 +2983,239 @@ mark {
   .btn-xs {
     font-size: 10px;
     padding: 3px 6px;
+  }
+}
+
+/* ========================================
+   CATEGORY EDIT FUNCTIONALITY
+======================================== */
+
+/* Edit Category Form */
+.edit-category-form {
+  flex: 1;
+  margin-right: 15px;
+}
+
+.edit-input {
+  background: linear-gradient(135deg, #f8fafc, #ffffff);
+  border: 2px solid #3b82f6;
+  border-radius: 8px;
+  padding: 10px 15px;
+  font-size: 14px;
+  font-weight: 500;
+  transition: all 0.3s ease;
+  box-shadow: 0 0 0 3px rgba(59, 130, 246, 0.1);
+}
+
+.edit-input:focus {
+  outline: none;
+  border-color: #1d4ed8;
+  box-shadow: 0 0 0 4px rgba(59, 130, 246, 0.2);
+  background: white;
+}
+
+/* Action Buttons Container */
+.action-buttons {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+
+.edit-actions {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+
+/* Edit Category Button */
+.btn-edit-category {
+  background: linear-gradient(135deg, #f6a12a, #d28f23);
+  color: white;
+  border: none;
+  padding: 8px 12px;
+  border-radius: 6px;
+  cursor: pointer;
+  font-size: 12px;
+  font-weight: 600;
+  transition: all 0.3s ease;
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+  display: flex;
+  align-items: center;
+  gap: 4px;
+}
+
+.btn-edit-category:hover {
+  background: linear-gradient(135deg, #a16806, #8e5a06);
+  transform: translateY(-1px);
+  box-shadow: 0 4px 12px rgba(59, 130, 246, 0.3);
+}
+
+/* Save Category Button */
+.btn-save-category {
+  background: linear-gradient(135deg, #10b981, #059669);
+  color: white;
+  border: none;
+  padding: 8px 12px;
+  border-radius: 6px;
+  cursor: pointer;
+  font-size: 12px;
+  font-weight: 600;
+  transition: all 0.3s ease;
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+  display: flex;
+  align-items: center;
+  gap: 4px;
+}
+
+.btn-save-category:hover {
+  background: linear-gradient(135deg, #059669, #047857);
+  transform: translateY(-1px);
+  box-shadow: 0 4px 12px rgba(16, 185, 129, 0.3);
+}
+
+/* Cancel Edit Button */
+.btn-cancel-edit {
+  background: linear-gradient(135deg, #6b7280, #4b5563);
+  color: white;
+  border: none;
+  padding: 8px 12px;
+  border-radius: 6px;
+  cursor: pointer;
+  font-size: 12px;
+  font-weight: 600;
+  transition: all 0.3s ease;
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+  display: flex;
+  align-items: center;
+  gap: 4px;
+}
+
+.btn-cancel-edit:hover {
+  background: linear-gradient(135deg, #4b5563, #374151);
+  transform: translateY(-1px);
+  box-shadow: 0 4px 12px rgba(107, 114, 128, 0.3);
+}
+
+/* Enhanced Delete Button */
+.btn-delete-category {
+  background: linear-gradient(135deg, #ef4444, #dc2626);
+  color: white;
+  border: none;
+  padding: 8px 12px;
+  border-radius: 6px;
+  cursor: pointer;
+  font-size: 12px;
+  font-weight: 600;
+  transition: all 0.3s ease;
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+  display: flex;
+  align-items: center;
+  gap: 4px;
+}
+
+.btn-delete-category:hover {
+  background: linear-gradient(135deg, #dc2626, #b91c1c);
+  transform: translateY(-1px);
+  box-shadow: 0 4px 12px rgba(239, 68, 68, 0.3);
+}
+
+/* Enhanced Category Item for Edit Mode */
+.category-item {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 15px;
+  border: 1px solid #e5e7eb;
+  border-radius: 10px;
+  margin-bottom: 10px;
+  background: white;
+  transition: all 0.3s ease;
+  min-height: 60px;
+}
+
+.category-item:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 4px 15px rgba(0, 0, 0, 0.1);
+  border-color: #667eea;
+}
+
+/* Edit Mode Highlight */
+.category-item:has(.edit-category-form) {
+  border-color: #3b82f6;
+  background: linear-gradient(135deg, #f8fafc, #ffffff);
+  box-shadow: 0 4px 20px rgba(59, 130, 246, 0.15);
+}
+
+/* Category Info Section */
+.category-info {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  flex: 1;
+  min-height: 40px;
+}
+
+/* Enhanced Category Actions */
+.category-actions {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  flex-shrink: 0;
+}
+
+/* Responsive Design for Edit Mode */
+@media (max-width: 768px) {
+  .category-item {
+    flex-direction: column;
+    align-items: stretch;
+    gap: 15px;
+    padding: 20px;
+  }
+
+  .category-info {
+    justify-content: space-between;
+  }
+
+  .category-actions {
+    justify-content: flex-end;
+  }
+
+  .action-buttons,
+  .edit-actions {
+    flex-wrap: wrap;
+    gap: 10px;
+  }
+
+  .btn-edit-category,
+  .btn-save-category,
+  .btn-cancel-edit,
+  .btn-delete-category {
+    font-size: 11px;
+    padding: 6px 10px;
+  }
+
+  .edit-input {
+    font-size: 16px; /* Prevent zoom on iOS */
+  }
+}
+
+@media (max-width: 480px) {
+  .action-buttons,
+  .edit-actions {
+    width: 100%;
+    justify-content: space-between;
+  }
+
+  .btn-edit-category,
+  .btn-save-category,
+  .btn-cancel-edit,
+  .btn-delete-category {
+    flex: 1;
+    justify-content: center;
+    min-width: 80px;
   }
 }

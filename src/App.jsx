@@ -7,8 +7,9 @@ function App() {
     <AuthProvider>
       <Router>
         <AppContent />
-      </Router>
+      </Router>   
     </AuthProvider>
+    
   );
 }
 export default App;

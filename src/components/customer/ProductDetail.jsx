@@ -2,6 +2,7 @@ import React, { useState, useEffect, useCallback } from "react";
 import { useParams, useNavigate } from "react-router-dom";
 import { getProducts } from "../../services/productService";
 import { getCategories } from "../../services/categoryService";
+import { Footer } from "../common/Footer";
 // import { Header } from "../common/Header";
 import "../../styles/ProductDetail.css";
 
@@ -577,6 +578,10 @@ export function ProductDetail() {
           </div>
         )}
       </div>
+      <Footer />
     </div>
+    
+    
   );
+
 }

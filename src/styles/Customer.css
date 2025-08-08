@@ -118,11 +118,13 @@
 }
 
 .customer-layout .product-card-link {
+  width: 250px;
   text-decoration: none;
   color: inherit;
 }
 
 .customer-layout .product-card {
+  width: 100%;
   background: white;
   border-radius: 16px;
   overflow: hidden;
