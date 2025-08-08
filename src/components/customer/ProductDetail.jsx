@@ -539,7 +539,9 @@ export function ProductDetail() {
                 <p>
                   Cảm ơn bạn đã quan tâm đến sản phẩm của chúng tôi! Để được tư
                   vấn chi tiết và mua hàng với giá tốt nhất, bạn vui lòng ghé
-                  thăm cửa hàng trực tiếp.
+                  thăm cửa hàng trực tiếp hoặc liên hệ tới số điện thoại
+                  <strong> 0909 123 456</strong>. Chúng tôi luôn sẵn sàng
+                  hỗ trợ bạn 24/7.
                 </p>
                 <div className="notification-features">
                   <div className="feature-item">

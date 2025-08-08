@@ -73,12 +73,16 @@ export function CategorySection({ products }) {
 
         // Responsive products per slide: 2 on mobile, 3 on desktop
         const productsPerSlide = isMobile ? 2 : 3;
-        const totalSlides = Math.ceil(
-          categoryProducts.length / productsPerSlide
+        // Giới hạn tối đa 3 slides (9 sản phẩm desktop / 6 sản phẩm mobile)
+        const maxSlides = 3;
+        const limitedProducts = categoryProducts.slice(0, maxSlides * productsPerSlide);
+        const totalSlides = Math.min(
+          Math.ceil(limitedProducts.length / productsPerSlide),
+          maxSlides
         );
         const currentSlideIndex = currentSlides[category.id] || 0;
         const startIndex = currentSlideIndex * productsPerSlide;
-        const visibleProducts = categoryProducts.slice(
+        const visibleProducts = limitedProducts.slice(
           startIndex,
           startIndex + productsPerSlide
         );

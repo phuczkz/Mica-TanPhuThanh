@@ -8,6 +8,7 @@ import { ProductDetail } from "./components/customer/ProductDetail";
 import { Header } from "./components/common/Header";
 import { getProducts } from "./services/productService";
 import { ProtectedRoute } from "./components/common/ProtectedRoute";
+import CategoryProductsPage from "./pages/CategoryProductsPage";
 
 // ...existing imports...
 
@@ -32,6 +33,7 @@ function AppContent() {
             path="/products/:id"
             element={<ProductDetail products={products} />}
           />
+          <Route path="/products" element={<CategoryProductsPage />} />
           <Route path="/contact" element={<ContactPage />} />
 
           {/* Đảm bảo route admin được bao bọc bằng ProtectedRoute */}
