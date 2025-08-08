@@ -1,0 +1,694 @@
+.main-header {
+  /* position: sticky; */
+  top: 0;
+  z-index: 1000; /* Tăng z-index cao nhất */
+  background: white;
+  box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
+  width: 100%;
+}
+
+/* Top Bar */
+.top-bar {
+  background: #f8f9fa;
+  padding: 8px 0;
+  font-size: 14px;
+  border-bottom: 1px solid #e9ecef;
+  /* position: relative; */
+  z-index: 1001;
+}
+
+.container {
+  max-width: 1200px;
+  margin: 0 auto;
+  padding: 0 20px;
+  width: 100%;
+  box-sizing: border-box;
+
+}
+
+.top-bar .container {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  flex-wrap: wrap;
+}
+
+.logo {
+  flex-shrink: 0;
+  display: flex;
+  align-items: center;
+}
+
+.logo-img {
+  height: auto;
+  width: 300px;
+  max-width: 100%;
+}
+
+/* Header Main - FIX Layout */
+.header-main {
+  padding: 15px 0;
+  background: white;
+  width: 100%;
+  position: relative;
+  z-index: 1;
+}
+
+.header-content {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 15px;
+  flex-wrap: wrap;
+  width: 100%;
+}
+
+.search-form {
+  display: flex;
+  border: 2px solid #e74c3c;
+  border-radius: 25px;
+  overflow: hidden;
+  box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
+  min-width: 200px;
+  flex: 1;
+  max-width: 400px;
+}
+
+.search-input {
+  flex: 1;
+  padding: 12px 20px;
+  border: none;
+  outline: none;
+  font-size: 14px;
+  min-width: 0;
+}
+
+.search-input::placeholder {
+  color: #999;
+}
+
+.search-btn {
+  background: #e74c3c;
+  color: white;
+  border: none;
+  padding: 12px 20px;
+  cursor: pointer;
+  font-size: 14px;
+  font-weight: 500;
+  transition: background 0.3s;
+  white-space: nowrap;
+}
+
+.search-btn:hover {
+  background: #c0392b;
+}
+
+.admin-login-btn {
+  background: #3498db;
+  color: white;
+  /* padding: 10px 15px; */
+  border-radius: 50px;
+  text-decoration: none;
+  font-weight: 500;
+  transition: background 0.3s;
+  font-size: 18px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  min-width: 40px;
+  height: 40px;
+}
+
+.admin-login-btn:hover {
+  background: #2980b9;
+}
+
+.header-actions {
+  display: flex;
+  align-items: center;
+  gap: 15px;
+  flex-wrap: wrap;
+}
+
+.cart-info {
+  display: flex;
+  align-items: center;
+  gap: 5px;
+  cursor: pointer;
+}
+
+.cart-icon {
+  font-size: 16px;
+}
+
+.cart-count {
+  background: #e74c3c;
+  color: white;
+  border-radius: 50%;
+  padding: 2px 6px;
+  font-size: 11px;
+  font-weight: bold;
+  min-width: 16px;
+  text-align: center;
+}
+
+.hotline-info {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  flex-wrap: wrap;
+}
+
+.hotline-label {
+  color: #666;
+  font-weight: 500;
+  font-size: 13px;
+}
+
+.hotline-number {
+  color: #e74c3c;
+  text-decoration: none;
+  font-weight: bold;
+  font-size: 13px;
+}
+
+.hotline-number:hover {
+  text-decoration: underline;
+}
+
+/* Navigation - QUAN TRỌNG NHẤT */
+.main-nav {
+  background: #e74c3c;
+  box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
+  width: 100%;
+  position: relative;
+  /* z-index: 1000; Cao nhất cho navigation */
+}
+
+.nav-content {
+  /* position: relative; */
+  width: 100%;
+  z-index: 1000;
+}
+
+.mobile-menu-toggle {
+  display: none;
+  background: none;
+  border: none;
+  color: white;
+  font-size: 20px;
+  padding: 15px;
+  cursor: pointer;
+  /* position: relative; */
+  z-index: 1003; /* Button cao nhất */
+}
+
+.nav-menu {
+  display: flex;
+  list-style: none;
+  margin: 0;
+  padding: 0;
+  flex-wrap: wrap;
+  /* position: relative; */
+  z-index: 1002;
+}
+
+
+.nav-link {
+  display: block;
+  color: white;
+  text-decoration: none;
+  padding: 15px 20px;
+  font-weight: 500;
+  font-size: 14px;
+  transition: background 0.3s;
+  white-space: nowrap;
+}
+
+.nav-link:hover {
+  background: rgba(255, 255, 255, 0.1);
+}
+
+/* Mobile Responsive - FIX Z-INDEX */
+@media (max-width: 768px) {
+  .container {
+    padding: 0 15px;
+  }
+
+  .top-bar {
+    padding: 6px 0;
+  }
+
+  .top-bar .container {
+    flex-direction: column;
+    gap: 8px;
+    text-align: center;
+  }
+
+  .header-main {
+    padding: 10px 0;
+  }
+
+  .header-content {
+    flex-direction: column;
+    gap: 12px;
+    align-items: stretch;
+  }
+
+  .logo {
+    align-self: center;
+    order: 1;
+  }
+
+  .logo-img {
+    height: 40px;
+  }
+
+  .search-form {
+    order: 2; /* Thay đổi order vì đã ẩn admin btn */
+    max-width: none;
+    width: 100%;
+  }
+
+  .search-input {
+    padding: 10px 15px;
+    font-size: 14px;
+  }
+
+  .search-btn {
+    padding: 10px 16px;
+    font-size: 13px;
+  }
+
+  .admin-login-btn {
+    display: none; /* Ẩn nút login admin trên mobile */
+  }
+
+  .header-actions {
+    gap: 10px;
+    justify-content: center;
+    flex-wrap: wrap;
+  }
+
+  .hotline-info {
+    gap: 5px;
+  }
+
+  .hotline-label,
+  .hotline-number {
+    font-size: 12px;
+  }
+
+  .cart-icon {
+    font-size: 14px;
+  }
+
+  .mobile-menu-toggle {
+    display: block;
+    z-index: 1004; /* Đảm bảo button ở trên cùng */
+  }
+
+  .nav-menu {
+    position: absolute;
+    top: 100%;
+    left: 0;
+    right: 0;
+    background: #e74c3c;
+    flex-direction: column;
+    max-height: 0;
+    overflow: hidden;
+    transition: max-height 0.3s ease;
+    box-shadow: 0 8px 25px rgba(0, 0, 0, 0.3); /* Shadow mạnh hơn */
+    z-index: 1003; /* Cao hơn tất cả content */
+    border-radius: 0 0 8px 8px;
+  }
+
+  .nav-menu-open {
+    max-height: 400px;
+  }
+
+  .nav-item {
+    width: 100%;
+    position: relative;
+    z-index: 1003;
+  }
+
+  .nav-link {
+    padding: 15px 20px;
+    border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+    background: #e74c3c;
+    position: relative;
+    z-index: 1003;
+    display: block;
+    color: white;
+    text-decoration: none;
+    font-weight: 500;
+    transition: background 0.3s;
+  }
+
+  .nav-link:hover {
+    background: #c0392b;
+    color: white;
+  }
+
+  .nav-link:last-child {
+    border-bottom: none;
+  }
+}
+
+@media (max-width: 480px) {
+  .container {
+    padding: 0 10px;
+  }
+
+  .top-bar {
+    padding: 5px 0; /* Không ẩn hoàn toàn, chỉ thu nhỏ */
+  }
+
+  .top-bar .container {
+    flex-direction: row;
+    justify-content: space-between;
+    align-items: center;
+    gap: 10px;
+  }
+
+  .header-main {
+    padding: 8px 0;
+  }
+
+  .logo-img {
+    height: 35px;
+  }
+
+  .search-input {
+    padding: 8px 12px;
+    font-size: 13px;
+  }
+
+  .search-btn {
+    padding: 8px 12px;
+    font-size: 12px;
+  }
+
+  .admin-login-btn {
+    padding: 6px 10px;
+    min-width: 32px;
+    height: 32px;
+    font-size: 16px;
+  }
+
+  .nav-link {
+    padding: 10px 15px;
+    font-size: 13px;
+  }
+
+  .mobile-menu-toggle {
+    padding: 12px;
+  }
+
+  .header-actions {
+    flex-wrap: nowrap;
+    gap: 8px;
+  }
+
+  .hotline-info {
+    display: none; /* Ẩn hotline trên mobile nhỏ để tiết kiệm không gian */
+  }
+}
+
+/* Fix cho màn hình rất nhỏ */
+@media (max-width: 425px) {
+  .header-content {
+    gap: 8px;
+  }
+
+  .search-form {
+    border-radius: 20px;
+  }
+
+  .search-input {
+    padding: 8px 12px;
+    font-size: 13px;
+  }
+
+  .search-btn {
+    padding: 8px 12px;
+    font-size: 12px;
+  }
+
+  .logo-img {
+    height: 32px;
+  }
+
+  .admin-login-btn {
+    min-width: 30px;
+    height: 30px;
+    font-size: 15px;
+  }
+
+  .cart-count {
+    min-width: 18px;
+    height: 18px;
+    font-size: 10px;
+  }
+}
+
+@media (max-width: 375px) {
+  .container {
+    padding: 0 8px;
+  }
+
+  .header-content {
+    gap: 6px;
+  }
+
+  .search-input {
+    padding: 6px 10px;
+    font-size: 12px;
+  }
+
+  .search-btn {
+    padding: 6px 10px;
+    font-size: 11px;
+  }
+
+  .logo-img {
+    height: 28px;
+  }
+
+  .admin-login-btn {
+    min-width: 28px;
+    height: 28px;
+    font-size: 14px;
+  }
+
+  .mobile-menu-toggle {
+    padding: 10px;
+    font-size: 18px;
+  }
+
+  .nav-link {
+    padding: 12px 15px;
+    font-size: 14px;
+  }
+}
+
+@media (max-width: 320px) {
+  .container {
+    padding: 0 5px;
+  }
+
+  .header-main {
+    padding: 5px 0;
+  }
+
+  .header-content {
+    gap: 4px;
+  }
+
+  .logo-img {
+    height: 26px;
+  }
+
+  .search-input {
+    padding: 5px 8px;
+    font-size: 11px;
+    min-width: 120px;
+  }
+
+  .search-btn {
+    padding: 5px 8px;
+    font-size: 10px;
+  }
+
+  .admin-login-btn {
+    min-width: 26px;
+    height: 26px;
+    font-size: 13px;
+  }
+
+  .mobile-menu-toggle {
+    padding: 8px;
+    font-size: 16px;
+  }
+
+  .nav-link {
+    padding: 10px 12px;
+    font-size: 13px;
+  }
+
+  .cart-icon {
+    font-size: 12px;
+  }
+
+  .cart-count {
+    min-width: 16px;
+    height: 16px;
+    font-size: 9px;
+  }
+}
+
+/* Fix cho orientation landscape trên mobile */
+@media (max-width: 768px) and (orientation: landscape) {
+  .header-main {
+    padding: 5px 0;
+  }
+
+  .logo-img {
+    height: 30px;
+  }
+
+  .nav-menu-open {
+    max-height: 300px;
+  }
+}
+
+/* Menu overlay */
+.menu-overlay {
+  position: fixed;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background: rgba(0, 0, 0, 0.5);
+  z-index: 9998; /* Dưới menu nhưng trên content */
+  display: none;
+}
+
+@media (max-width: 768px) {
+  .menu-overlay {
+    /* display: block; */
+  }
+}
+
+/* Đảm bảo tất cả content khác có z-index thấp hơn */
+.main-content,
+.product-grid,
+.category-section,
+.product-card,
+.home-container,
+.product-detail-container {
+  position: relative;
+  z-index: 1 !important; /* Force z-index thấp */
+}
+
+/* Fix cho các component có thể có z-index cao */
+.modal,
+.popup,
+.dropdown {
+  z-index: 9000 !important; /* Vẫn dưới menu */
+}
+
+/* Đảm bảo body không bị scroll khi menu mở */
+@media (max-width: 768px) {
+  body.menu-open {
+    overflow: hidden;
+  }
+}
+.search-dropdown-menu {
+  position: absolute;
+  top: 110%;
+  left: 0;
+  right: 0;
+  background: #fff;
+  border-radius: 12px;
+  box-shadow: 0 4px 24px rgba(0,0,0,0.12);
+  z-index: 2000;
+  margin: 0;
+  padding: 8px 0;
+  list-style: none;
+  max-height: 300px;
+  overflow-y: auto;
+}
+
+.search-dropdown-item {
+  padding: 10px 20px;
+  cursor: pointer;
+  color: #333;
+  display: flex;
+  align-items: center;
+  transition: background 0.2s;
+}
+
+.search-dropdown-item:hover {
+  background: #f5f5f5;
+}
+
+.search-dropdown-item.no-result {
+  color: #aaa;
+  cursor: default;
+}
+.search-dropdown-wrapper {
+  position: relative;
+  z-index: 1;
+}
+.header-main.search-dropdown-active {
+  z-index: 2001 !important;
+  position: relative;
+}
+.search-dropdown-link {
+  display: flex;
+  align-items: center;
+  width: 100%;
+  height: 100%;
+  text-decoration: none;
+  color: inherit;
+  cursor: pointer;
+}
+
+.search-dropdown-thumb {
+  width: 40px;
+  height: 40px;
+  object-fit: cover;
+  border-radius: 6px;
+  background: #f5f5f5;
+  flex-shrink: 0;
+}
+
+.search-dropdown-info {
+  display: flex;
+  flex-direction: column;
+}
+
+.search-dropdown-name {
+  font-weight: 500;
+  font-size: 15px;
+  margin-bottom: 2px;
+}
+
+.search-dropdown-status {
+  font-size: 13px;
+  color: #fff;
+  padding: 2px 8px;
+  border-radius: 10px;
+  display: inline-block;
+  width: fit-content;
+}
+
+.search-dropdown-status.in-stock {
+  background: #27ae60;
+}
+
+.search-dropdown-status.out-stock {
+  background: #e74c3c;
+}

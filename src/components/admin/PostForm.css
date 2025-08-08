@@ -1,0 +1,9 @@
+.ql-editor img,
+.content-preview img {
+  max-width: 100px;
+  height: auto;
+  display: block;
+  margin: 12px auto;
+  border-radius: 8px;
+  box-shadow: 0 2px 8px rgba(0,0,0,0.08);
+}
