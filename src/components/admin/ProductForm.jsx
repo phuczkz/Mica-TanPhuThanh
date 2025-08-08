@@ -652,8 +652,8 @@ export function ProductForm({ productToEdit, onSave, onCancel }) {
                   alt="Preview"
                   style={{
                     width: "100%",
-                    height: "150px",
-                    objectFit: "cover",
+                    height: "200px",
+                    // objectFit: "cover",
                     borderRadius: "8px",
                     marginBottom: "15px",
                   }}
