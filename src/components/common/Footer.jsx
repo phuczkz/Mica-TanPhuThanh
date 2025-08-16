@@ -1,9 +1,65 @@
-import React from "react";
+import React, { useState, useEffect } from "react";
 import { Link } from "react-router-dom";
+// Import các icon cần thiết
+import {
+  FaMapMarkerAlt,
+  FaPhoneAlt,
+  FaEnvelope,
+  FaFacebook,
+  FaHome,
+  FaShoppingBag,
+  FaThList,
+  FaInfoCircle,
+  FaHeadset,
+  FaShippingFast,
+  FaShieldAlt,
+  FaQuestionCircle,
+  FaChevronUp,
+} from "react-icons/fa";
 import "../../styles/Footer.css";
 
 export function Footer() {
   const currentYear = new Date().getFullYear();
+  const [isMobile, setIsMobile] = useState(window.innerWidth < 768);
+  const [openAccordion, setOpenAccordion] = useState(null); // Chỉ một accordion được mở tại một thời điểm
+
+  // Theo dõi sự thay đổi kích thước màn hình
+  useEffect(() => {
+    const handleResize = () => {
+      setIsMobile(window.innerWidth < 768);
+    };
+    window.addEventListener("resize", handleResize);
+    return () => window.removeEventListener("resize", handleResize);
+  }, []);
+
+  // Hàm xử lý việc đóng/mở accordion
+  const toggleAccordion = (index) => {
+    if (openAccordion === index) {
+      setOpenAccordion(null); // Đóng lại nếu đang mở
+    } else {
+      setOpenAccordion(index); // Mở accordion mới
+    }
+  };
+
+  const AccordionSection = ({ title, index, children }) => {
+    const isOpen = openAccordion === index;
+    return (
+      <div className="footer-section">
+        <h4
+          className="footer-title accordion-toggle"
+          onClick={() => isMobile && toggleAccordion(index)}
+        >
+          {title}
+          {isMobile && (
+            <span className={`accordion-icon ${isOpen ? "open" : ""}`}></span>
+          )}
+        </h4>
+        <div className={`accordion-content ${isOpen ? "open" : ""}`}>
+          {children}
+        </div>
+      </div>
+    );
+  };
 
   return (
     <footer className="footer">
@@ -20,64 +76,80 @@ export function Footer() {
             </div>
             <div className="footer-contact">
               <div className="contact-item">
-                <span className="icon">📍</span>
+                <FaMapMarkerAlt className="icon" />
                 <span>123 Đường ABC, Quận XYZ, TP.HCM</span>
               </div>
               <div className="contact-item">
-                <span className="icon">📞</span>
+                <FaPhoneAlt className="icon" />
                 <span>+84 123 456 789</span>
               </div>
               <div className="contact-item">
-                <span className="icon">📧</span>
+                <FaEnvelope className="icon" />
                 <span>Tanphuthanh@gmail.com</span>
               </div>
             </div>
           </div>
 
           {/* Quick Links */}
-          <div className="footer-section">
-            <h4 className="footer-title">Liên kết nhanh</h4>
+          <AccordionSection title="Liên kết nhanh" index={1}>
             <ul className="footer-links">
               <li>
-                <Link to="/">🏠 Trang chủ</Link>
+                <Link to="/">
+                  <FaHome /> Trang chủ
+                </Link>
               </li>
               <li>
-                <Link to="/products">🛍️ Sản phẩm</Link>
+                <Link to="/products">
+                  <FaShoppingBag /> Sản phẩm
+                </Link>
               </li>
               <li>
-                <Link to="/categories">📂 Danh mục</Link>
+                <Link to="/categories">
+                  <FaThList /> Danh mục
+                </Link>
               </li>
               <li>
-                <Link to="/about">ℹ️ Về chúng tôi</Link>
+                <Link to="/about">
+                  <FaInfoCircle /> Về chúng tôi
+                </Link>
               </li>
               <li>
-                <Link to="/contact">📞 Liên hệ</Link>
+                <Link to="/contact">
+                  <FaHeadset /> Liên hệ
+                </Link>
               </li>
             </ul>
-          </div>
+          </AccordionSection>
 
           {/* Customer Support */}
-          <div className="footer-section">
-            <h4 className="footer-title">Hỗ trợ khách hàng</h4>
+          <AccordionSection title="Hỗ trợ khách hàng" index={2}>
             <ul className="footer-links">
               <li>
-                <Link to="/help">❓ Trung tâm trợ giúp</Link>
+                <Link to="/help">
+                  <FaQuestionCircle /> Trung tâm trợ giúp
+                </Link>
               </li>
               <li>
-                <Link to="/shipping">🚚 Chính sách giao hàng</Link>
+                <Link to="/shipping">
+                  <FaShippingFast /> Chính sách giao hàng
+                </Link>
               </li>
               <li>
-                <Link to="/warranty">🛡️ Bảo hành</Link>
+                <Link to="/warranty">
+                  <FaShieldAlt /> Bảo hành
+                </Link>
               </li>
               <li>
-                <Link to="/faq">💬 Câu hỏi thường gặp</Link>
+                <Link to="/faq">
+                  <FaHeadset /> Câu hỏi thường gặp
+                </Link>
               </li>
             </ul>
-          </div>
+          </AccordionSection>
 
           {/* Social & Newsletter */}
           <div className="footer-section">
-            <h4 className="footer-title">Kết nối với chúng tôi</h4>
+            <h4 className="footer-title">Kết nối và nhận tin</h4>
             <div className="social-links">
               <a
                 href="https://facebook.com"
@@ -85,8 +157,9 @@ export function Footer() {
                 target="_blank"
                 rel="noopener noreferrer"
               >
-                <span>📘</span> Facebook
+                <FaFacebook /> Facebook
               </a>
+              {/* Thêm các mạng xã hội khác nếu cần */}
             </div>
           </div>
         </div>
@@ -94,14 +167,7 @@ export function Footer() {
         {/* Footer Bottom */}
         <div className="footer-bottom">
           <div className="footer-bottom-content">
-            <div
-              className="footer-copyright"
-              style={{
-                color: "#666",
-                justifyContent: "center",
-                textAlign: "center",
-              }}
-            >
+            <div className="footer-copyright">
               <p>&copy; {currentYear} Mica Store. Tất cả quyền được bảo lưu.</p>
               <p className="footer-dev">
                 Phát triển bởi <span className="dev-name">Tấn Phú Thành</span>{" "}
@@ -118,7 +184,7 @@ export function Footer() {
         onClick={() => window.scrollTo({ top: 0, behavior: "smooth" })}
         aria-label="Lên đầu trang"
       >
-        ⬆️
+        <FaChevronUp />
       </button>
     </footer>
   );
