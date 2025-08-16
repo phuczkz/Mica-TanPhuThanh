@@ -10,8 +10,7 @@
 
 # production
 /build
-#firebase
-.firebase/
+
 # misc
 .DS_Store
 .env.local
@@ -69,3 +68,5 @@ pids
 .Trashes
 ehthumbs.db
 Thumbs.db
+#firebase
+.firebase/
