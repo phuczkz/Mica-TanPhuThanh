@@ -6,13 +6,11 @@ import {
   FaEnvelope,
   FaClock,
   FaFacebookF,
-  FaInstagram,
-  FaYoutube,
   FaPaperPlane,
   FaSpinner,
   FaChevronDown,
 } from "react-icons/fa";
-import { SiZalo } from "react-icons/si";
+import {} from "react-icons/si";
 import "../styles/Contact.css";
 
 const faqData = [
@@ -168,17 +166,12 @@ export function ContactPage() {
               <div className="social-links">
                 <h3>Kết nối với chúng tôi</h3>
                 <div className="social-icons">
-                  <a href="#" className="social-icon" aria-label="Facebook">
+                  <a
+                    href="https://facebook.com/your-page"
+                    className="social-icon"
+                    aria-label="Facebook"
+                  >
                     <FaFacebookF />
-                  </a>
-                  <a href="#" className="social-icon" aria-label="Instagram">
-                    <FaInstagram />
-                  </a>
-                  <a href="#" className="social-icon" aria-label="Zalo">
-                    <SiZalo />
-                  </a>
-                  <a href="#" className="social-icon" aria-label="Youtube">
-                    <FaYoutube />
                   </a>
                 </div>
               </div>

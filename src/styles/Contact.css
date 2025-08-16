@@ -112,12 +112,6 @@
   text-decoration: underline;
 }
 
-.social-links {
-  margin-top: 30px;
-  padding-top: 20px;
-  border-top: 1px solid var(--border-color);
-}
-
 .social-links h3 {
   font-size: 1rem;
   font-weight: 600;
