@@ -6,10 +6,12 @@ import "../styles/Admin.css";
 
 export function LoginPage() {
   const [loading, setLoading] = useState(false);
+  const [errorMessage, setErrorMessage] = useState(""); // Thêm state để quản lý lỗi
   const navigate = useNavigate();
 
   const handleGoogleLogin = async () => {
     setLoading(true);
+    setErrorMessage(""); // Xóa lỗi cũ khi thử đăng nhập lại
     try {
       const provider = new GoogleAuthProvider();
       const result = await signInWithPopup(auth, provider);
@@ -22,10 +24,9 @@ export function LoginPage() {
         "micatanthanh@gmail.com",
       ];
       if (!adminEmails.includes(user.email)) {
-        alert("Bạn không có quyền truy cập trang quản trị!");
+        setErrorMessage("Bạn không có quyền truy cập trang quản trị!"); // Hiển thị lỗi trên giao diện
         await auth.signOut();
         setLoading(false);
-        navigate("/login");
         return;
       }
 
@@ -35,7 +36,7 @@ export function LoginPage() {
       navigate("/admin");
     } catch (error) {
       console.error("Lỗi đăng nhập:", error);
-      alert("Lỗi đăng nhập: " + error.message);
+      setErrorMessage("Lỗi đăng nhập: " + error.message); // Hiển thị lỗi trên giao diện
     } finally {
       setLoading(false);
     }
@@ -63,6 +64,14 @@ export function LoginPage() {
           ⚠️ <strong>Lưu ý:</strong> Chỉ nhà phát triển mới có quyền truy cập hệ
           thống quản lý
         </div>
+
+        {/* Hiển thị thông báo lỗi nếu có */}
+        {errorMessage && (
+          <p style={{ color: "red", marginBottom: "15px", textAlign: "center" }}>
+            {errorMessage}
+          </p>
+        )}
+
         <button
           onClick={handleGoogleLogin}
           className="google-btn"

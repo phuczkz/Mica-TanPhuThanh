@@ -125,24 +125,23 @@ export function Footer() {
           <AccordionSection title="Hỗ trợ khách hàng" index={2}>
             <ul className="footer-links">
               <li>
-                <Link to="/help">
+                <a href="/contact">
                   <FaQuestionCircle /> Trung tâm trợ giúp
-                </Link>
+                </a>
               </li>
               <li>
-                <Link to="/shipping">
+                <a href="/contact">
                   <FaShippingFast /> Chính sách giao hàng
-                </Link>
+                </a>
               </li>
               <li>
-                <Link to="/warranty">
+                <a href="/contact">
                   <FaShieldAlt /> Bảo hành
-                </Link>
-              </li>
+                </a>              </li>
               <li>
-                <Link to="/faq">
+                <a href="/contact">
                   <FaHeadset /> Câu hỏi thường gặp
-                </Link>
+                </a>
               </li>
             </ul>
           </AccordionSection>
