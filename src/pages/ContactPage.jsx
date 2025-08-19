@@ -63,46 +63,19 @@ export function ContactPage() {
   const handleSubmit = async (e) => {
     e.preventDefault();
     setIsSubmitting(true);
+
+    // Hiển thị modal thông báo ngay lập tức
+    setTimeout(() => {
+      setSubmitStatus({
+        type: "info",
+        message: "Hệ thống đang phát triển. Để được hỗ trợ chi tiết vui lòng liên hệ qua SĐT hoặc đến trực tiếp cửa hàng.",
+      });
+      setIsSubmitting(false);
+    }, 1000);
+  };
+
+  const closeModal = () => {
     setSubmitStatus(null);
-
-    if (
-      !formData.name.trim() ||
-      !formData.email.trim() ||
-      !formData.message.trim()
-    ) {
-      setSubmitStatus({
-        type: "error",
-        message: "Vui lòng điền đầy đủ thông tin bắt buộc (*).",
-      });
-      setIsSubmitting(false);
-      return;
-    }
-
-    const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
-    if (!emailRegex.test(formData.email)) {
-      setSubmitStatus({
-        type: "error",
-        message: "Vui lòng nhập email hợp lệ.",
-      });
-      setIsSubmitting(false);
-      return;
-    }
-
-    try {
-      await new Promise((resolve) => setTimeout(resolve, 1500));
-      setSubmitStatus({
-        type: "success",
-        message: "Cảm ơn bạn đã liên hệ! Chúng tôi sẽ phản hồi sớm nhất.",
-      });
-      setFormData({ name: "", email: "", phone: "", subject: "", message: "" });
-    } catch (error) {
-      setSubmitStatus({
-        type: "error",
-        message: "Có lỗi xảy ra. Vui lòng thử lại sau.",
-      });
-    } finally {
-      setIsSubmitting(false);
-    }
   };
 
   return (
@@ -167,7 +140,7 @@ export function ContactPage() {
                 <h3>Kết nối với chúng tôi</h3>
                 <div className="social-icons">
                   <a
-                    href="https://facebook.com/your-page"
+                    href="https://www.facebook.com/thanh.duy.270412"
                     className="social-icon"
                     aria-label="Facebook"
                   >
@@ -183,11 +156,29 @@ export function ContactPage() {
                 Điền vào biểu mẫu bên dưới và chúng tôi sẽ liên hệ lại với bạn
                 sớm nhất có thể.
               </p>
+              
+              {/* Modal thông báo */}
               {submitStatus && (
-                <div className={`alert ${submitStatus.type}`}>
-                  {submitStatus.message}
+                <div className="modal-overlay" onClick={closeModal}>
+                  <div className="modal-content" onClick={(e) => e.stopPropagation()}>
+                    <div className="modal-header">
+                      <h3>Thông báo</h3>
+                      <button className="modal-close" onClick={closeModal}>
+                        ×
+                      </button>
+                    </div>
+                    <div className="modal-body">
+                      <p>{submitStatus.message}</p>
+                    </div>
+                    <div className="modal-footer">
+                      <button className="modal-btn" onClick={closeModal}>
+                        Đã hiểu
+                      </button>
+                    </div>
+                  </div>
                 </div>
               )}
+
               <form onSubmit={handleSubmit} className="contact-form" noValidate>
                 <div className="form-row">
                   <div className="form-group">
@@ -278,7 +269,7 @@ export function ContactPage() {
               <h2>Vị trí của chúng tôi</h2>
               <div className="map-container">
                 <iframe
-                  src="https://www.google.com/maps/embed?pb=!1m18!1m12!1m3!1d3959.4045238645477!2d106.65748!3d10.9720828!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!3m3!1m2!1s0x3174d13142fc8599%3A0xb0bf871fa00beca8!2s705%20%C4%90.%20C%C3%A1ch%20M%E1%BA%A1ng%20Th%C3%A1ng%20T%C3%A1m%2C%20Ch%C3%A1nh%20Ngh%C4%A9a%2C%20Th%E1%BB%A7%20D%E1%BA%A7u%20M%E1%BB%99t%2C%20B%C3%ACnh%20D%C6%B0%C6%A1ng%2C%20Vi%E1%BB%87t%20Nam!5e0!3m2!1svi!2s!4v1723156789123!5m2!1svi!2s"
+                  src="https://www.google.com/maps/embed?pb=!1m18!1m12!1m3!1d3724.123456789!2d106.6592603!3d10.97201!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!3m3!1m2!1s0x0%3A0x0!2zMTDCsDU4JzE5LjIiTiAxMDbCsDM5JzM1LjciRQ!5e0!3m2!1svi!2s!4v1690000000000"
                   width="100%"
                   height="450"
                   style={{ border: 0 }}
