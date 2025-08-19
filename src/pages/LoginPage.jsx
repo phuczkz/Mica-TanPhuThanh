@@ -35,8 +35,13 @@ export function LoginPage() {
       // Chuyển hướng đến trang admin
       navigate("/admin");
     } catch (error) {
-      console.error("Lỗi đăng nhập:", error);
-      setErrorMessage("Lỗi đăng nhập: " + error.message); // Hiển thị lỗi trên giao diện
+      if (error.code === "auth/popup-closed-by-user") {
+        console.log("Người dùng đã đóng cửa sổ đăng nhập.");
+        setErrorMessage("Quá trình đăng nhập đã bị hủy.");
+      } else {
+        console.error("Lỗi đăng nhập:", error);
+        setErrorMessage("Lỗi đăng nhập: " + error.message); // Hiển thị lỗi trên giao diện
+      }
     } finally {
       setLoading(false);
     }
