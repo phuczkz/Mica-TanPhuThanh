@@ -50,7 +50,7 @@ export function LoginPage() {
   return (
     <div className="login-container">
       <div className="login-card">
-        <h2 style={{ marginBottom: "20px", color: "#333" }}>🔐 Đăng nhập</h2>
+        <h2 style={{ marginBottom: "20px", color: "#333" }}>Đăng nhập</h2>
         <p style={{ color: "#666", marginBottom: "30px" }}>
           Sử dụng tài khoản Google để đăng nhập
         </p>
@@ -82,7 +82,7 @@ export function LoginPage() {
           className="google-btn"
           disabled={loading}
         >
-          {loading ? "Đang đăng nhập..." : <>📧 Đăng nhập bằng Google</>}
+          {loading ? "Đang đăng nhập..." : <><img src="./search.png" alt="Google" style={{ marginLeft: "5px", verticalAlign: "middle", width: "16px", height: "16px" }} /> Đăng nhập bằng Google</>}
         </button>
 
         <div style={{ marginTop: "20px" }}>
