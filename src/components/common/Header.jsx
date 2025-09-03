@@ -1,8 +1,10 @@
 import React, { useState, useEffect, useRef } from "react";
 import { Link } from "react-router-dom";
+import { useAuth } from "../../context/AuthContext"; // Import useAuth
 import "../../styles/Header.css";
 
 export function Header({ onSearch, products = [] }) {
+  const { currentUser, logout } = useAuth(); // Lấy currentUser và hàm logout
   const [searchTerm, setSearchTerm] = useState("");
   const [isMenuOpen, setIsMenuOpen] = useState(false);
   const [showDropdown, setShowDropdown] = useState(false);
@@ -180,9 +182,25 @@ export function Header({ onSearch, products = [] }) {
               </ul>
             )}
           </div>
-          <Link to="/login" className="admin-login-btn">
-            👤
-          </Link>
+          {currentUser ? (
+            <div className="customer-user-info">
+              <span className="customer-user-name">
+                Chào, {currentUser.displayName || currentUser.email}
+              </span>
+              {currentUser.role === "admin" && (
+                <Link to="/admin" className="customer-admin-link">
+                  Quản lý
+                </Link>
+              )}
+              <button onClick={logout} className="customer-logout-btn">
+                Đăng xuất
+              </button>
+            </div>
+          ) : (
+            <Link to="/login" className="admin-login-btn">
+              👤 Đăng nhập
+            </Link>
+          )}
         </div>
       </div>
       <nav className="main-nav">

@@ -106,12 +106,12 @@
 .admin-login-btn {
   background: #3498db;
   color: white;
-  /* padding: 10px 15px; */
+  padding: 10px 15px;
   border-radius: 50px;
   text-decoration: none;
   font-weight: 500;
   transition: background 0.3s;
-  font-size: 18px;
+  /* font-size: 18px; */
   display: flex;
   align-items: center;
   justify-content: center;
@@ -250,24 +250,22 @@
   }
 
   .header-content {
-    flex-direction: column;
-    gap: 12px;
-    align-items: stretch;
+    flex-direction: row; /* Đặt theo hàng ngang */
+    flex-wrap: nowrap; /* Ngăn xuống hàng */
+    gap: 15px;
+    align-items: center;
+    justify-content: space-between;
   }
 
   .logo {
-    align-self: center;
-    order: 1;
-  }
-
-  .logo-img {
-    height: 40px;
+    display: none; /* Ẩn logo để tiết kiệm không gian */
   }
 
   .search-form {
-    order: 2; /* Thay đổi order vì đã ẩn admin btn */
+    order: 1;
+    flex: 1 1 auto; /* Cho phép co giãn */
+    min-width: 150px; /* Không co lại quá nhỏ */
     max-width: none;
-    width: 100%;
   }
 
   .search-input {
@@ -281,7 +279,30 @@
   }
 
   .admin-login-btn {
-    display: none; /* Ẩn nút login admin trên mobile */
+    display: flex; /* Hiển thị nút đăng nhập trên mobile */
+    order: 2;
+    flex-shrink: 0; /* Không co lại */
+    padding: 8px 12px;
+    min-width: 35px;
+    height: 35px;
+    font-size: 16px;
+  }
+
+  .customer-user-info {
+    order: 2;
+    flex-shrink: 0; /* Không co lại */
+    gap: 8px;
+  }
+
+  /* Ẩn tên người dùng trên màn hình nhỏ để tiết kiệm không gian */
+  .customer-user-name {
+    display: none;
+  }
+
+  .customer-admin-link,
+  .customer-logout-btn {
+    font-size: 12px;
+    padding: 6px 10px;
   }
 
   .header-actions {
@@ -362,7 +383,7 @@
   }
 
   .top-bar {
-    padding: 5px 0; /* Không ẩn hoàn toàn, chỉ thu nhỏ */
+    padding: 5px 0;
   }
 
   .top-bar .container {
@@ -376,8 +397,27 @@
     padding: 8px 0;
   }
 
+  .header-content {
+    flex-wrap: wrap; /* Cho phép xuống hàng trên màn hình rất nhỏ */
+    justify-content: center;
+  }
+
+  .logo {
+    display: block; /* Hiển thị lại logo */
+    order: 1;
+    width: 100%;
+    text-align: center;
+    margin-bottom: 8px;
+  }
+
   .logo-img {
     height: 35px;
+  }
+
+  .search-form {
+    order: 3; /* Thanh tìm kiếm xuống dưới */
+    width: 100%;
+    margin-top: 8px;
   }
 
   .search-input {
@@ -391,10 +431,23 @@
   }
 
   .admin-login-btn {
+    order: 2;
     padding: 6px 10px;
     min-width: 32px;
     height: 32px;
     font-size: 16px;
+  }
+
+  .customer-user-info {
+    order: 2;
+    width: 100%;
+    justify-content: center;
+  }
+
+  /* Hiển thị lại tên người dùng trên màn hình nhỏ */
+  .customer-user-name {
+    display: inline-block;
+    font-size: 12px;
   }
 
   .nav-link {
@@ -412,7 +465,7 @@
   }
 
   .hotline-info {
-    display: none; /* Ẩn hotline trên mobile nhỏ để tiết kiệm không gian */
+    display: none;
   }
 }
 
@@ -692,4 +745,46 @@
 
 .search-dropdown-status.out-stock {
   background: #e74c3c;
+}
+
+/* Customer User Info Styles */
+.customer-user-info {
+  display: flex;
+  align-items: center;
+  gap: 15px;
+  color: #333;
+}
+
+.customer-user-name {
+  font-weight: 500;
+  font-size: 14px;
+}
+
+.customer-admin-link {
+  font-size: 14px;
+  color: #3498db;
+  text-decoration: none;
+  font-weight: 500;
+  transition: color 0.3s;
+}
+
+.customer-admin-link:hover {
+  color: #2980b9;
+  text-decoration: underline;
+}
+
+.customer-logout-btn {
+  background: #e02323;
+  color: white;
+  border: none;
+  padding: 8px 15px;
+  border-radius: 20px;
+  cursor: pointer;
+  font-size: 14px;
+  font-weight: 500;
+  transition: background 0.3s;
+}
+
+.customer-logout-btn:hover {
+  background: #c0392b;
 }

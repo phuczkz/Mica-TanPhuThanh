@@ -125,7 +125,6 @@
 .social-links {
   display: flex;
   gap: 15px; /* Giãn cách các icon */
-  margin-bottom: 30px;
 }
 
 .social-link {

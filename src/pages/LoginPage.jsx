@@ -23,17 +23,15 @@ export function LoginPage() {
         "duyphuctran.it@gmail.com",
         "micatanthanh@gmail.com",
       ];
-      if (!adminEmails.includes(user.email)) {
-        setErrorMessage("Bạn không có quyền truy cập trang quản trị!"); // Hiển thị lỗi trên giao diện
-        await auth.signOut();
-        setLoading(false);
-        return;
+      if (adminEmails.includes(user.email)) {
+        console.log("Đăng nhập thành công với quyền admin:", user.email);
+        // Chuyển hướng đến trang admin
+        navigate("/admin");
+      } else {
+        console.log("Đăng nhập thành công với quyền khách hàng:", user.email);
+        // Chuyển hướng đến trang chủ cho khách hàng
+        navigate("/");
       }
-
-      console.log("Đăng nhập thành công:", user.email);
-
-      // Chuyển hướng đến trang admin
-      navigate("/admin");
     } catch (error) {
       if (error.code === "auth/popup-closed-by-user") {
         console.log("Người dùng đã đóng cửa sổ đăng nhập.");
@@ -72,7 +70,9 @@ export function LoginPage() {
 
         {/* Hiển thị thông báo lỗi nếu có */}
         {errorMessage && (
-          <p style={{ color: "red", marginBottom: "15px", textAlign: "center" }}>
+          <p
+            style={{ color: "red", marginBottom: "15px", textAlign: "center" }}
+          >
             {errorMessage}
           </p>
         )}
@@ -82,7 +82,23 @@ export function LoginPage() {
           className="google-btn"
           disabled={loading}
         >
-          {loading ? "Đang đăng nhập..." : <><img src="./search.png" alt="Google" style={{ marginLeft: "5px", verticalAlign: "middle", width: "16px", height: "16px" }} /> Đăng nhập bằng Google</>}
+          {loading ? (
+            "Đang đăng nhập..."
+          ) : (
+            <>
+              <img
+                src="./search.png"
+                alt="Google"
+                style={{
+                  marginLeft: "5px",
+                  verticalAlign: "middle",
+                  width: "16px",
+                  height: "16px",
+                }}
+              />{" "}
+              Đăng nhập bằng Google
+            </>
+          )}
         </button>
 
         <div style={{ marginTop: "20px" }}>
