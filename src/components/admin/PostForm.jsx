@@ -204,6 +204,42 @@ export function PostForm({ post, onSave, onCancel }) {
     return <div dangerouslySetInnerHTML={{ __html: content }} />;
   };
 
+  // Bắt sự kiện Paste Image (Tránh lỗi dán Base64)
+  const handlePaste = async (e) => {
+    const items = (e.clipboardData || e.originalEvent.clipboardData).items;
+    let hasImage = false;
+    for (const item of items) {
+      if (item.type.indexOf("image") === 0) {
+        hasImage = true;
+        e.preventDefault(); // Chặn hành vi dán mặc định của trình duyệt
+        const file = item.getAsFile();
+        if (!file) continue;
+
+        if (file.size > 10 * 1024 * 1024) {
+          alert("❌ Ảnh dán quá lớn! Tối đa 10MB.");
+          return;
+        }
+
+        try {
+          const compressedBase64 = await compressImage(file, 200);
+          const res = await fetch(compressedBase64);
+          const blob = await res.blob();
+          const nFile = new File([blob], `paste-${Date.now()}.jpg`, { type: blob.type });
+
+          const url = await uploadImageToFirebase(nFile, "post-content");
+          const quill = quillRef.current?.getEditor();
+          if (quill) {
+            const range = quill.getSelection(true);
+            quill.insertEmbed(range ? range.index : 0, "image", url, "user");
+          }
+        } catch (error) {
+          console.error("Lỗi khi dán ảnh:", error);
+          alert("Không thể tải lên ảnh vừa dán.");
+        }
+      }
+    }
+  };
+
   // Calculate document size
   const calculateDocumentSize = () => {
     const dataStr = JSON.stringify(formData);
@@ -226,9 +262,8 @@ export function PostForm({ post, onSave, onCancel }) {
         <h3>{post ? "✏️ Chỉnh sửa" : "✍️ Viết mới"}</h3>
         <div className="size-indicator">
           <span
-            className={`size-badge ${
-              currentSize.isValid ? "valid" : "invalid"
-            }`}
+            className={`size-badge ${currentSize.isValid ? "valid" : "invalid"
+              }`}
           >
             📊 {currentSize.kb}KB / 1024KB
             {!currentSize.isValid && " ⚠️"}
@@ -317,12 +352,11 @@ export function PostForm({ post, onSave, onCancel }) {
 
           {/* Write Tab */}
           {activeTab === "write" && (
-            <div className="write-section">
+            <div className="write-section" onPaste={handlePaste}>
               <div className="content-toolbar">
                 <label
-                  className={`btn btn-sm btn-outline add-image-btn ${
-                    loading ? "disabled" : ""
-                  }`}
+                  className={`btn btn-sm btn-outline add-image-btn ${loading ? "disabled" : ""
+                    }`}
                 >
                   📷 Thêm ảnh (tự động nén ~150KB)
                   <input

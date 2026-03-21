@@ -1,213 +1,86 @@
 import { useState, useEffect } from "react";
 import { Link } from "react-router-dom";
 import { getCategories } from "../../services/categoryService";
+import { ChevronRight } from "lucide-react";
 
 export function CategorySection({ products }) {
   const [categories, setCategories] = useState([]);
-  const [currentSlides, setCurrentSlides] = useState({}); // Track slide position for each category
-  const [isMobile, setIsMobile] = useState(window.innerWidth <= 768);
 
   useEffect(() => {
-    const handleResize = () => {
-      setIsMobile(window.innerWidth <= 768);
-    };
-
-    window.addEventListener("resize", handleResize);
-    return () => window.removeEventListener("resize", handleResize);
+    getCategories().then(setCategories).catch(console.error);
   }, []);
 
-  useEffect(() => {
-    const fetchCategories = async () => {
-      try {
-        const categoriesData = await getCategories();
-        setCategories(categoriesData);
-
-        // Initialize slide positions
-        const initialSlides = {};
-        categoriesData.forEach((category) => {
-          initialSlides[category.id] = 0;
-        });
-        setCurrentSlides(initialSlides);
-      } catch (error) {
-        console.error("Error loading categories:", error);
-      }
-    };
-    fetchCategories();
-  }, []);
-
-  // Group products by category
   const productsByCategory = {};
   products.forEach((product) => {
     const categoryId = product.category || "other";
-    if (!productsByCategory[categoryId]) {
-      productsByCategory[categoryId] = [];
-    }
+    if (!productsByCategory[categoryId]) productsByCategory[categoryId] = [];
     productsByCategory[categoryId].push(product);
   });
 
-  // Handle slide navigation
-  const nextSlide = (categoryId, maxSlides) => {
-    setCurrentSlides((prev) => ({
-      ...prev,
-      [categoryId]:
-        prev[categoryId] >= maxSlides - 1 ? 0 : prev[categoryId] + 1,
-    }));
-  };
-
-  const prevSlide = (categoryId, maxSlides) => {
-    setCurrentSlides((prev) => ({
-      ...prev,
-      [categoryId]:
-        prev[categoryId] <= 0 ? maxSlides - 1 : prev[categoryId] - 1,
-    }));
-  };
-
   return (
-    <div>
+    <div className="space-y-16">
       {categories.map((category) => {
-        const categoryProducts = productsByCategory[category.id];
+        const categoryProducts = productsByCategory[category.id] || [];
+        if (categoryProducts.length === 0) return null;
 
-        if (!categoryProducts || categoryProducts.length === 0) {
-          return null;
-        }
-
-        // Responsive products per slide: 2 on mobile, 3 on desktop
-        const productsPerSlide = isMobile ? 2 : 3;
-        // Giới hạn tối đa 3 slides (9 sản phẩm desktop / 6 sản phẩm mobile)
-        const maxSlides = 3;
-        const limitedProducts = categoryProducts.slice(0, maxSlides * productsPerSlide);
-        const totalSlides = Math.min(
-          Math.ceil(limitedProducts.length / productsPerSlide),
-          maxSlides
-        );
-        const currentSlideIndex = currentSlides[category.id] || 0;
-        const startIndex = currentSlideIndex * productsPerSlide;
-        const visibleProducts = limitedProducts.slice(
-          startIndex,
-          startIndex + productsPerSlide
-        );
+        // Display up to 8 products per category on home page
+        const topProducts = categoryProducts.slice(0, 8);
 
         return (
-          <div key={category.id} className="category-section">
-            <div className="category-header">
-              <span className="category-icon">🏷️</span>
-              <h2 className="category-title">{category.name}</h2>
-              <span className="product-count">
-                ({categoryProducts.length} sản phẩm)
-              </span>
+          <div key={category.id} className="bg-white rounded-xl shadow-sm border border-gray-100 overflow-hidden">
+            {/* Header */}
+            <div className="bg-gray-50 px-6 py-4 flex items-center justify-between border-b border-gray-100">
+              <div className="flex items-center">
+                <span className="w-2 h-6 bg-brand-orange rounded mr-3"></span>
+                <h3 className="text-xl font-bold text-gray-900 uppercase tracking-wide">{category.name}</h3>
+                <span className="ml-3 text-sm text-gray-500 bg-gray-200 px-2.5 py-0.5 rounded-full">
+                  {categoryProducts.length}
+                </span>
+              </div>
+              <Link to={`/products?category=${category.id}`} className="hidden sm:flex items-center text-sm font-semibold text-brand-orange hover:text-orange-600 transition-colors">
+                Xem tất cả <ChevronRight size={16} className="ml-1" />
+              </Link>
             </div>
 
-            <div className="products-carousel">
-              {/* Previous Button - Desktop Only */}
-              {totalSlides > 1 && !isMobile && (
-                <button
-                  className="carousel-btn prev-btn desktop-only"
-                  onClick={() => prevSlide(category.id, totalSlides)}
-                  title="Sản phẩm trước"
-                >
-                  ◀
-                </button>
-              )}
-
-              {/* Products Grid */}
-              <div className="products-grid">
-                {visibleProducts.map((product) => (
-                  <Link
-                    key={product.id}
-                    to={`/products/${product.id}`}
-                    className="product-card-link"
-                  >
-                    <div className="product-card">
-                      {product.imageBase64 ? (
-                        <img
-                          src={product.imageBase64}
-                          alt={product.name}
-                          className="product-image"
-                        />
-                      ) : (
-                        <div className="no-image">Không có ảnh</div>
-                      )}
-                      <div className="product-name">{product.name}</div>
-                      <div className="product-price">
-                        {product.price?.toLocaleString("vi-VN")} VND
-                      </div>
-                      <div className="product-stock">
-                        {product.inStock !== false ? (
-                          <span className="in-stock">✅ Còn hàng</span>
-                        ) : (
-                          <span className="out-stock">❌ Hết hàng</span>
-                        )}
+            {/* Grid */}
+            <div className="p-6">
+              <div className="grid grid-cols-2 lg:grid-cols-4 gap-4 sm:gap-6">
+                {topProducts.map((product) => (
+                  <Link key={product.id} to={`/products/${product.id}`} className="group flex flex-col h-full bg-white rounded-lg border border-gray-100 hover:border-brand-orange hover:shadow-md transition-all duration-300">
+                    <div className="aspect-square w-full relative overflow-hidden bg-gray-50 rounded-t-lg">
+                      <img 
+                        src={product.imageBase64 || product.image || "/logo.png"} 
+                        alt={product.name} 
+                        className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500"
+                      />
+                    </div>
+                    <div className="p-4 flex flex-col flex-grow">
+                      <h4 className="text-sm font-semibold text-gray-800 line-clamp-2 mb-2 group-hover:text-brand-navy">
+                        {product.name}
+                      </h4>
+                      <div className="mt-auto">
+                        <div className="text-brand-orange font-bold text-base sm:text-lg mb-2">
+                          {product.price ? `${product.price.toLocaleString("vi-VN")} đ` : 'Liên hệ báo giá'}
+                        </div>
+                        <div className="text-xs font-medium">
+                          {product.inStock !== false ? (
+                            <span className="text-green-600 bg-green-50 px-2 py-1 rounded">Còn hàng</span>
+                          ) : (
+                            <span className="text-red-500 bg-red-50 px-2 py-1 rounded">Hết hàng</span>
+                          )}
+                        </div>
                       </div>
                     </div>
                   </Link>
                 ))}
               </div>
-
-              {/* Next Button - Desktop Only */}
-              {totalSlides > 1 && !isMobile && (
-                <button
-                  className="carousel-btn next-btn desktop-only"
-                  onClick={() => nextSlide(category.id, totalSlides)}
-                  title="Sản phẩm tiếp theo"
-                >
-                  ▶
-                </button>
-              )}
-            </div>
-
-            {/* Navigation Controls - Mobile */}
-            {totalSlides > 1 && (
-              <div className="navigation-controls">
-                {/* Previous Button - Mobile */}
-                {isMobile && (
-                  <button
-                    className="carousel-btn prev-btn mobile-only"
-                    onClick={() => prevSlide(category.id, totalSlides)}
-                    title="Sản phẩm trước"
-                  >
-                    ◀
-                  </button>
-                )}
-
-                {/* Slide Indicators */}
-                <div className="slide-indicators">
-                  {Array.from({ length: totalSlides }, (_, index) => (
-                    <button
-                      key={index}
-                      className={`indicator ${
-                        index === currentSlideIndex ? "active" : ""
-                      }`}
-                      onClick={() =>
-                        setCurrentSlides((prev) => ({
-                          ...prev,
-                          [category.id]: index,
-                        }))
-                      }
-                    />
-                  ))}
-                </div>
-
-                {/* Next Button - Mobile */}
-                {isMobile && (
-                  <button
-                    className="carousel-btn next-btn mobile-only"
-                    onClick={() => nextSlide(category.id, totalSlides)}
-                    title="Sản phẩm tiếp theo"
-                  >
-                    ▶
-                  </button>
-                )}
+              
+              {/* Mobile view all link */}
+              <div className="mt-6 text-center sm:hidden">
+                <Link to={`/products?category=${category.id}`} className="inline-flex items-center justify-center w-full py-2.5 border border-brand-orange text-brand-orange rounded font-medium hover:bg-brand-orange hover:text-white transition-colors">
+                  Xem tất cả ({categoryProducts.length})
+                </Link>
               </div>
-            )}
-
-            {/* View All Link */}
-            <div className="view-all-container">
-              <Link
-                to={`/products?category=${category.id}`}
-                className="view-all-link"
-              >
-                Xem tất cả {categoryProducts.length} sản phẩm ▶
-              </Link>
             </div>
           </div>
         );

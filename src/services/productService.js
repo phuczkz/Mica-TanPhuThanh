@@ -6,11 +6,18 @@ import {
   doc,
   updateDoc,
   deleteDoc,
+  onSnapshot
 } from "firebase/firestore";
 
 export const getProducts = async () => {
   const querySnapshot = await getDocs(collection(db, "products"));
   return querySnapshot.docs.map((doc) => ({ id: doc.id, ...doc.data() }));
+};
+
+export const listenToProducts = (callback) => {
+  return onSnapshot(collection(db, "products"), (snapshot) => {
+    callback(snapshot.docs.map((doc) => ({ id: doc.id, ...doc.data() })));
+  });
 };
 
 export const addProduct = async (productData) => {

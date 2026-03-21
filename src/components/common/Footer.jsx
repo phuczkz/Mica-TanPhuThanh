@@ -1,190 +1,115 @@
-import React, { useState, useEffect } from "react";
+import React from "react";
 import { Link } from "react-router-dom";
-// Import các icon cần thiết
-import {
-  FaMapMarkerAlt,
-  FaPhoneAlt,
-  FaEnvelope,
-  FaFacebook,
-  FaHome,
-  FaShoppingBag,
-  FaThList,
-  FaInfoCircle,
-  FaHeadset,
-  FaShippingFast,
-  FaShieldAlt,
-  FaQuestionCircle,
-  FaChevronUp,
-} from "react-icons/fa";
-import "../../styles/Footer.css";
+import { MapPin, Phone, Mail, Facebook, ChevronUp } from "lucide-react";
 
 export function Footer() {
   const currentYear = new Date().getFullYear();
-  const [isMobile, setIsMobile] = useState(window.innerWidth < 768);
-  const [openAccordion, setOpenAccordion] = useState(null); // Chỉ một accordion được mở tại một thời điểm
-
-  // Theo dõi sự thay đổi kích thước màn hình
-  useEffect(() => {
-    const handleResize = () => {
-      setIsMobile(window.innerWidth < 768);
-    };
-    window.addEventListener("resize", handleResize);
-    return () => window.removeEventListener("resize", handleResize);
-  }, []);
-
-  // Hàm xử lý việc đóng/mở accordion
-  const toggleAccordion = (index) => {
-    if (openAccordion === index) {
-      setOpenAccordion(null); // Đóng lại nếu đang mở
-    } else {
-      setOpenAccordion(index); // Mở accordion mới
-    }
-  };
-
-  const AccordionSection = ({ title, index, children }) => {
-    const isOpen = openAccordion === index;
-    return (
-      <div className="footer-section">
-        <h4
-          className="footer-title accordion-toggle"
-          onClick={() => isMobile && toggleAccordion(index)}
-        >
-          {title}
-          {isMobile && (
-            <span className={`accordion-icon ${isOpen ? "open" : ""}`}></span>
-          )}
-        </h4>
-        <div className={`accordion-content ${isOpen ? "open" : ""}`}>
-          {children}
-        </div>
-      </div>
-    );
-  };
 
   return (
-    <footer className="footer">
-      <div className="footer-container">
-        {/* Footer Main Content */}
-        <div className="footer-content">
+    <footer className="bg-brand-navy text-white pt-16 pb-8">
+      <div className="max-w-7xl mx-auto px-4">
+        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-10 lg:gap-8 mb-12">
+
           {/* Company Info */}
-          <div className="footer-section">
-            <div className="footer-logo">
-              <h3>🏪 Mica Tấn Phú Thành Store</h3>
-              <p className="footer-tagline">
-                Nơi mua sắm trực tuyến tin cậy với sản phẩm chất lượng cao
-              </p>
-            </div>
-            <div className="footer-contact">
-              <div className="contact-item">
-                <FaMapMarkerAlt className="icon" />
-                <span>123 Đường ABC, Quận XYZ, TP.HCM</span>
+          <div>
+            <h3 className="text-2xl font-bold mb-4 tracking-tight">
+              MICA <span className="text-brand-yellow">TÂN PHÚ THÀNH</span>
+            </h3>
+            <p className="text-gray-300 text-sm leading-relaxed mb-6">
+              Đơn vị phân phối hàng đầu các vật tư quảng cáo, tấm ALU, MICA, Formex, Decal... tại Việt Nam. Uy tín, chất lượng và giá cả cạnh tranh.
+            </p>
+            <div className="space-y-3 text-sm text-gray-300">
+              <div className="flex items-start">
+                <MapPin size={18} className="mr-3 text-brand-yellow shrink-0 mt-0.5" />
+                <span>705 Đường Cách Mạng Tháng Tám, Chánh Nghĩa, Thủ Dầu Một, Bình Dương</span>
               </div>
-              <div className="contact-item">
-                <FaPhoneAlt className="icon" />
-                <span>+84 123 456 789</span>
+              <div className="flex items-center">
+                <Phone size={18} className="mr-3 text-brand-yellow shrink-0" />
+                <span>+84 989 305 754</span>
               </div>
-              <div className="contact-item">
-                <FaEnvelope className="icon" />
+              <div className="flex items-center">
+                <Mail size={18} className="mr-3 text-brand-yellow shrink-0" />
                 <span>Tanphuthanh@gmail.com</span>
               </div>
             </div>
           </div>
 
           {/* Quick Links */}
-          <AccordionSection title="Liên kết nhanh" index={1}>
-            <ul className="footer-links">
-              <li>
-                <Link to="/">
-                  <FaHome /> Trang chủ
-                </Link>
-              </li>
-              <li>
-                <Link to="/products">
-                  <FaShoppingBag /> Sản phẩm
-                </Link>
-              </li>
-              <li>
-                <Link to="/categories">
-                  <FaThList /> Danh mục
-                </Link>
-              </li>
-              <li>
-                <Link to="/about">
-                  <FaInfoCircle /> Về chúng tôi
-                </Link>
-              </li>
-              <li>
-                <Link to="/contact">
-                  <FaHeadset /> Liên hệ
-                </Link>
-              </li>
+          <div>
+            <h4 className="text-lg font-semibold mb-6 flex items-center">
+              <span className="w-8 h-1 bg-brand-orange mr-3 rounded"></span> Liên Kết Nhanh
+            </h4>
+            <ul className="space-y-3 text-sm text-gray-400">
+              {['Trang chủ', 'Sản phẩm', 'Danh mục vật tư', 'Về chúng tôi', 'Liên hệ báo giá'].map((item, idx) => (
+                <li key={idx}>
+                  <Link to="/" className="hover:text-brand-yellow transition-colors flex items-center">
+                    <span className="text-brand-orange mr-2">›</span> {item}
+                  </Link>
+                </li>
+              ))}
             </ul>
-          </AccordionSection>
+          </div>
 
           {/* Customer Support */}
-          <AccordionSection title="Hỗ trợ khách hàng" index={2}>
-            <ul className="footer-links">
-              <li>
-                <a href="/contact">
-                  <FaQuestionCircle /> Trung tâm trợ giúp
-                </a>
-              </li>
-              <li>
-                <a href="/contact">
-                  <FaShippingFast /> Chính sách giao hàng
-                </a>
-              </li>
-              <li>
-                <a href="/contact">
-                  <FaShieldAlt /> Bảo hành
-                </a>              </li>
-              <li>
-                <a href="/contact">
-                  <FaHeadset /> Câu hỏi thường gặp
-                </a>
-              </li>
+          <div>
+            <h4 className="text-lg font-semibold mb-6 flex items-center">
+              <span className="w-8 h-1 bg-brand-orange mr-3 rounded"></span> Hỗ Trợ Khách Hàng
+            </h4>
+            <ul className="space-y-3 text-sm text-gray-400">
+              {['Chính sách bảo hành', 'Chính sách đổi trả', 'Chính sách vận chuyển', 'Câu hỏi thường gặp', 'Bảng giá vật tư Cắt Laser'].map((item, idx) => (
+                <li key={idx}>
+                  <Link to="/" className="hover:text-brand-yellow transition-colors flex items-center">
+                    <span className="text-brand-orange mr-2">›</span> {item}
+                  </Link>
+                </li>
+              ))}
             </ul>
-          </AccordionSection>
+          </div>
 
-          {/* Social & Newsletter */}
-          <div className="footer-section">
-            <h4 className="footer-title">Kết nối và nhận tin</h4>
-            <div className="social-links">
-              <a
-                href="https://facebook.com"
-                className="social-link facebook"
-                target="_blank"
-                rel="noopener noreferrer"
+          {/* Newsletter & Social */}
+          <div>
+            <h4 className="text-lg font-semibold mb-6 flex items-center">
+              <span className="w-8 h-1 bg-brand-orange mr-3 rounded"></span> Đăng Ký Tư Vấn
+            </h4>
+            <p className="text-sm text-gray-400 mb-4">Để lại email để nhận báo giá vật tư mới nhất.</p>
+            <form className="flex mb-6" onSubmit={(e) => e.preventDefault()}>
+              <input
+                type="email"
+                placeholder="Email của bạn..."
+                className="bg-brand-blue border border-transparent text-white px-4 py-2 w-full focus:outline-none focus:border-brand-yellow rounded-l text-sm"
+              />
+              <button
+                type="submit"
+                className="bg-brand-orange hover:bg-orange-600 px-4 py-2 rounded-r transition-colors text-sm font-medium"
               >
-                <FaFacebook /> Facebook
+                Gửi
+              </button>
+            </form>
+            <div className="flex space-x-3">
+              <a href="#" className="w-10 h-10 rounded-full bg-brand-blue flex items-center justify-center hover:bg-brand-orange transition-colors">
+                <Facebook size={18} />
               </a>
-              {/* Thêm các mạng xã hội khác nếu cần */}
             </div>
           </div>
+
         </div>
 
-        {/* Footer Bottom */}
-        <div className="footer-bottom">
-          <div className="footer-bottom-content">
-            <div className="footer-copyright">
-              <p>&copy; {currentYear} Mica Store. Tất cả quyền được bảo lưu.</p>
-              <p className="footer-dev">
-                Phát triển bởi <span className="dev-name">Tấn Phú Thành</span>{" "}
-                ❤️
-              </p>
-            </div>
+        {/* Bottom */}
+        <div className="border-t border-brand-blue pt-8 mt-8 flex flex-col md:flex-row justify-between items-center">
+          <p className="text-sm text-gray-400 mb-4 md:mb-0">
+            &copy; {currentYear} Bán Vật Tư Quảng Cáo. Bản quyền thuộc về Mica Tân Phú Thành.
+          </p>
+          <div className="flex items-center space-x-4">
+            <button
+              onClick={() => window.scrollTo({ top: 0, behavior: "smooth" })}
+              className="w-10 h-10 bg-brand-blue hover:bg-brand-orange text-white rounded flex items-center justify-center transition-colors"
+              aria-label="Back to top"
+            >
+              <ChevronUp size={20} />
+            </button>
           </div>
         </div>
       </div>
-
-      {/* Back to Top Button */}
-      <button
-        className="back-to-top"
-        onClick={() => window.scrollTo({ top: 0, behavior: "smooth" })}
-        aria-label="Lên đầu trang"
-      >
-        <FaChevronUp />
-      </button>
     </footer>
   );
 }

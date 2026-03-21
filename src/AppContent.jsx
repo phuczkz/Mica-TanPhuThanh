@@ -1,55 +1,53 @@
-import { useLocation, Routes, Route } from "react-router-dom";
+import { Routes, Route } from "react-router-dom";
 import { useEffect, useState } from "react";
 import { HomePage } from "./pages/HomePage";
 import { AdminPage } from "./pages/AdminPage";
 import { LoginPage } from "./pages/LoginPage";
 import { ContactPage } from "./pages/ContactPage";
 import { ProductDetail } from "./components/customer/ProductDetail";
-import { Header } from "./components/common/Header";
-import { getProducts } from "./services/productService";
+import { listenToProducts } from "./services/productService";
 import { ProtectedRoute } from "./components/common/ProtectedRoute";
 import CategoryProductsPage from "./pages/CategoryProductsPage";
-
-// ...existing imports...
+import { MainLayout } from "./components/layout/MainLayout";
+import { CartPage } from "./pages/CartPage";
+import { StorePage } from "./pages/StorePage";
+import { BlogPage } from "./pages/BlogPage";
 
 function AppContent() {
   const [products, setProducts] = useState([]);
-  const location = useLocation();
 
   useEffect(() => {
-    getProducts().then(setProducts);
+    const unsubscribe = listenToProducts(setProducts);
+    return () => unsubscribe();
   }, []);
 
-  const hideHeader =
-    location.pathname.startsWith("/admin") || location.pathname === "/login";
-
   return (
-    <>
-      {!hideHeader && <Header products={products} />}
-      <div className="App">
-        <Routes>
-          <Route path="/" element={<HomePage products={products} />} />
-          <Route
-            path="/products/:id"
-            element={<ProductDetail products={products} />}
-          />
-          <Route path="/products" element={<CategoryProductsPage />} />
-          <Route path="/contact" element={<ContactPage />} />
+    <Routes>
+      {/* Public Routes */}
+      <Route element={<MainLayout products={products} />}>
+        <Route path="/" element={<HomePage products={products} />} />
+        <Route path="/products/:id" element={<ProductDetail products={products} />} />
+        <Route path="/products" element={<CategoryProductsPage />} />
+        <Route path="/store" element={<StorePage />} />
+        <Route path="/blog" element={<BlogPage />} />
+        <Route path="/contact" element={<ContactPage />} />
+        <Route path="/cart" element={<CartPage />} />
+      </Route>
 
-          {/* Đảm bảo route admin được bao bọc bằng ProtectedRoute */}
-          <Route
-            path="/admin"
-            element={
-              <ProtectedRoute adminOnly={true}>
-                <AdminPage />
-              </ProtectedRoute>
-            }
-          />
+      {/* Admin Route */}
+      <Route
+        path="/admin/*"
+        element={
+          <ProtectedRoute adminOnly={true}>
+            <AdminPage />
+          </ProtectedRoute>
+        }
+      />
 
-          <Route path="/login" element={<LoginPage />} />
-        </Routes>
-      </div>
-    </>
+      {/* Auth Route */}
+      <Route path="/login" element={<LoginPage />} />
+    </Routes>
   );
 }
+
 export default AppContent;

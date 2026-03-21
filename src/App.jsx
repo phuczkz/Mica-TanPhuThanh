@@ -1,15 +1,17 @@
 import { BrowserRouter as Router } from "react-router-dom";
 import { AuthProvider } from "./context/AuthContext";
-import AppContent from "./AppContent"; // tạo file mới hoặc component mới
+import { CartProvider } from "./contexts/CartContext";
+import AppContent from "./AppContent";
 
 function App() {
   return (
     <AuthProvider>
-      <Router>
-        <AppContent />
-      </Router>   
+      <CartProvider>
+        <Router>
+          <AppContent />
+        </Router>   
+      </CartProvider>
     </AuthProvider>
-    
   );
 }
 export default App;

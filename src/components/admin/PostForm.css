@@ -7,3 +7,23 @@
   border-radius: 8px;
   box-shadow: 0 2px 8px rgba(0,0,0,0.08);
 }
+
+.checkbox-label {
+  display: flex !important;
+  align-items: center;
+  gap: 8px;
+  cursor: pointer;
+  margin-top: 8px;
+}
+
+.checkbox-label input[type="checkbox"] {
+  width: 18px;
+  height: 18px;
+  margin: 0;
+  cursor: pointer;
+  accent-color: var(--brand-orange, #FF6B00);
+}
+
+.checkbox-label .checkmark {
+  display: none; /* Ẩn thẻ span thừa làm tổ chức CSS trước đó bị trượt */
+}

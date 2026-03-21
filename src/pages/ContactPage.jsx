@@ -1,5 +1,4 @@
 import { useState } from "react";
-import { Footer } from "../components/common/Footer";
 import {
   FaMapMarkerAlt,
   FaPhoneAlt,
@@ -10,7 +9,7 @@ import {
   FaSpinner,
   FaChevronDown,
 } from "react-icons/fa";
-import {} from "react-icons/si";
+import { } from "react-icons/si";
 import "../styles/Contact.css";
 
 const faqData = [
@@ -156,7 +155,7 @@ export function ContactPage() {
                 Điền vào biểu mẫu bên dưới và chúng tôi sẽ liên hệ lại với bạn
                 sớm nhất có thể.
               </p>
-              
+
               {/* Modal thông báo */}
               {submitStatus && (
                 <div className="modal-overlay" onClick={closeModal}>
@@ -292,15 +291,13 @@ export function ContactPage() {
                     >
                       <span>{item.question}</span>
                       <FaChevronDown
-                        className={`faq-icon ${
-                          openFaq === index ? "open" : ""
-                        }`}
+                        className={`faq-icon ${openFaq === index ? "open" : ""
+                          }`}
                       />
                     </button>
                     <div
-                      className={`faq-answer ${
-                        openFaq === index ? "open" : ""
-                      }`}
+                      className={`faq-answer ${openFaq === index ? "open" : ""
+                        }`}
                     >
                       <p>{item.answer}</p>
                     </div>
@@ -311,7 +308,7 @@ export function ContactPage() {
           </div>
         </div>
       </div>
-      <Footer />
+
     </div>
   );
 }

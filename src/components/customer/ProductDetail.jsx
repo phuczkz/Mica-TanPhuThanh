@@ -1,23 +1,25 @@
 import React, { useState, useEffect, useCallback } from "react";
-import { useParams, useNavigate } from "react-router-dom";
+import { useParams, useNavigate, Link } from "react-router-dom";
 import { getProducts } from "../../services/productService";
 import { getCategories } from "../../services/categoryService";
-import { Footer } from "../common/Footer";
-// import { Header } from "../common/Header";
-import "../../styles/ProductDetail.css";
+import { useCart } from "../../contexts/CartContext";
+import { ChevronRight, Minus, Plus, ShoppingCart, CreditCard, X, Maximize2, Play, Pause, Info, Phone, AlertCircle } from "lucide-react";
 
 export function ProductDetail() {
   const { id } = useParams();
   const navigate = useNavigate();
+  const { addToCart } = useCart();
   const [product, setProduct] = useState(null);
   const [category, setCategory] = useState(null);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
+  
   const [selectedImage, setSelectedImage] = useState(0);
   const [quantity, setQuantity] = useState(1);
+  const [selectedColor, setSelectedColor] = useState(null);
+  const [selectedSize, setSelectedSize] = useState(null);
   const [showImageModal, setShowImageModal] = useState(false);
   const [isAutoPlay, setIsAutoPlay] = useState(false);
-  const [autoPlayInterval, setAutoPlayInterval] = useState(null);
   const [showNotification, setShowNotification] = useState(false);
 
   useEffect(() => {
@@ -27,110 +29,45 @@ export function ProductDetail() {
           getProducts(),
           getCategories(),
         ]);
-
         const foundProduct = productsData.find((p) => p.id === id);
         if (!foundProduct) {
           setError("Không tìm thấy sản phẩm");
           return;
         }
-
-        const foundCategory = categoriesData.find(
-          (c) => c.id === foundProduct.category
-        );
-
+        const foundCategory = categoriesData.find((c) => c.id === foundProduct.category);
         setProduct(foundProduct);
         setCategory(foundCategory);
+        setSelectedColor(null);
+        setSelectedSize(null);
       } catch (err) {
         setError("Có lỗi khi tải thông tin sản phẩm");
-        console.error("Error fetching product:", err);
       } finally {
         setLoading(false);
       }
     };
-
     fetchProductDetail();
   }, [id]);
 
-  // Auto play slideshow - FIX: Sử dụng useCallback để tránh re-render không cần thiết
   useEffect(() => {
+    let interval;
     if (isAutoPlay && product) {
-      const allImages = [
-        product.imageBase64,
-        ...(product.additionalImages?.map((img) => img.base64) || []),
-      ].filter(Boolean);
-
+      const allImages = [product.imageBase64, ...(product.additionalImages?.map(i => i.base64) || [])].filter(Boolean);
       if (allImages.length > 1) {
-        // Clear interval cũ trước khi tạo mới
-        if (autoPlayInterval) {
-          clearInterval(autoPlayInterval);
-        }
-
-        const interval = setInterval(() => {
-          setSelectedImage((prev) =>
-            prev >= allImages.length - 1 ? 0 : prev + 1
-          );
+        interval = setInterval(() => {
+          setSelectedImage(prev => prev >= allImages.length - 1 ? 0 : prev + 1);
         }, 3000);
-
-        setAutoPlayInterval(interval);
-
-        return () => {
-          clearInterval(interval);
-        };
-      }
-    } else {
-      if (autoPlayInterval) {
-        clearInterval(autoPlayInterval);
-        setAutoPlayInterval(null);
       }
     }
-    // FIX: Loại bỏ selectedImage khỏi dependency array để tránh reset interval liên tục
-  }, [isAutoPlay, product, autoPlayInterval]);
+    return () => clearInterval(interval);
+  }, [isAutoPlay, product]);
 
-  // FIX: Sử dụng useCallback cho handleKeyDown
   const handleKeyDown = useCallback((e) => {
     if (e.key === "Escape") {
       setShowImageModal(false);
       setShowNotification(false);
     }
-  }, []); // Không có dependencies vì chỉ cần check key
+  }, []);
 
-  const handleQuantityChange = (change) => {
-    const newQuantity = quantity + change;
-    if (newQuantity >= 1) {
-      setQuantity(newQuantity);
-    }
-  };
-
-  const handleAddToCart = () => {
-    setShowNotification(true);
-  };
-
-  const handleBuyNow = () => {
-    setShowNotification(true);
-  };
-
-  const handleImageClick = () => {
-    setShowImageModal(true);
-  };
-
-  const closeImageModal = () => {
-    setShowImageModal(false);
-  };
-
-  const toggleAutoPlay = () => {
-    setIsAutoPlay(!isAutoPlay);
-  };
-
-  const handleThumbnailClick = (index) => {
-    setSelectedImage(index);
-    setIsAutoPlay(false); // Dừng auto play khi user click
-  };
-
-  const closeNotification = () => {
-    setShowNotification(false);
-  };
-
-  // FIX: Thêm handleKeyDown vào dependency array
   useEffect(() => {
     if (showImageModal || showNotification) {
       document.addEventListener("keydown", handleKeyDown);
@@ -139,449 +76,310 @@ export function ProductDetail() {
       document.removeEventListener("keydown", handleKeyDown);
       document.body.style.overflow = "unset";
     }
-
     return () => {
       document.removeEventListener("keydown", handleKeyDown);
       document.body.style.overflow = "unset";
     };
-  }, [showImageModal, showNotification, handleKeyDown]); // FIX: Thêm handleKeyDown
-
-  // Cleanup interval khi component unmount
-  useEffect(() => {
-    return () => {
-      if (autoPlayInterval) {
-        clearInterval(autoPlayInterval);
-      }
-    };
-  }, [autoPlayInterval]);
+  }, [showImageModal, showNotification, handleKeyDown]);
 
   if (loading) {
     return (
-      <div>
-        <div className="loading-container">
-          <div className="loading">Đang tải thông tin sản phẩm...</div>
-        </div>
+      <div className="flex justify-center items-center min-h-[60vh]">
+        <div className="animate-spin rounded-full h-12 w-12 border-4 border-brand-orange border-t-transparent"></div>
       </div>
     );
   }
 
   if (error || !product) {
     return (
-      <div>
-        <div className="error-container">
-          <div className="error-message">
-            <h2>❌ {error || "Không tìm thấy sản phẩm"}</h2>
-            <button onClick={() => navigate("/")} className="btn-back">
-              ← Quay lại trang chủ
-            </button>
-          </div>
-        </div>
+      <div className="flex flex-col justify-center items-center min-h-[60vh] text-center px-4">
+        <div className="text-red-500 mb-4"><Info size={48} /></div>
+        <h2 className="text-2xl font-bold text-gray-800 mb-6">{error || "Không tìm thấy sản phẩm"}</h2>
+        <button onClick={() => navigate("/")} className="bg-brand-navy hover:bg-brand-blue text-white px-6 py-2 rounded transition-colors">
+          Quay lại trang chủ
+        </button>
       </div>
     );
   }
 
-  // Tạo mảng ảnh (ảnh chính + ảnh bổ sung)
-  const allImages = [
-    product.imageBase64,
-    ...(product.additionalImages?.map((img) => img.base64) || []),
-  ].filter(Boolean);
+  const allImages = [product.imageBase64, ...(product.additionalImages?.map((img) => img.base64) || [])].filter(Boolean);
 
   return (
-    <div>
-      <div className="product-detail-container">
-        <div className="breadcrumb">
-          <span onClick={() => navigate("/")} className="breadcrumb-link">
-            Trang chủ
-          </span>
-          <span className="breadcrumb-separator"> › </span>
+    <div className="bg-white min-h-screen pb-16">
+      {/* Breadcrumb */}
+      <div className="bg-gray-50 border-b border-gray-100 py-3">
+        <div className="max-w-7xl mx-auto px-4 flex items-center text-sm text-gray-500 overflow-x-auto whitespace-nowrap">
+          <Link to="/" className="hover:text-brand-orange transition-colors">Trang chủ</Link>
+          <ChevronRight size={14} className="mx-2 shrink-0" />
           {category && (
             <>
-              <span className="breadcrumb-item">{category.name}</span>
-              <span className="breadcrumb-separator"> › </span>
+              <Link to={`/products?category=${category.id}`} className="hover:text-brand-orange transition-colors">{category.name}</Link>
+              <ChevronRight size={14} className="mx-2 shrink-0" />
             </>
           )}
-          <span className="breadcrumb-current">{product.name}</span>
+          <span className="text-gray-900 font-medium truncate">{product.name}</span>
         </div>
+      </div>
 
-        <div className="product-detail-content">
-          {/* Phần ảnh sản phẩm */}
-          <div className="product-images">
-            <div className="main-image" onClick={handleImageClick}>
+      <div className="max-w-7xl mx-auto px-4 py-8">
+        <div className="grid grid-cols-1 md:grid-cols-2 gap-8 lg:gap-12">
+          
+          {/* Left: Image Gallery */}
+          <div className="flex flex-col">
+            <div className="relative aspect-square bg-gray-50 rounded-lg border border-gray-200 overflow-hidden mb-4 group">
               {allImages.length > 0 ? (
-                <img
-                  src={allImages[selectedImage]}
-                  alt={product.name}
-                  className="main-product-image"
+                <img 
+                  src={allImages[selectedImage]} 
+                  alt={product.name} 
+                  className="w-full h-full object-contain cursor-zoom-in transition-transform duration-300 group-hover:scale-105"
+                  onClick={() => setShowImageModal(true)}
                 />
               ) : (
-                <div className="no-main-image">Không có ảnh</div>
+                <div className="w-full h-full flex items-center justify-center text-gray-400">Không có ảnh</div>
               )}
-              {/* Navigation arrows */}
-              {allImages.length > 1 && (
-                <div className="image-navigation">
-                  <button
-                    className="nav-btn prev-btn"
-                    onClick={(e) => {
-                      e.stopPropagation();
-                      setSelectedImage(
-                        selectedImage > 0
-                          ? selectedImage - 1
-                          : allImages.length - 1
-                      );
-                      setIsAutoPlay(false);
-                    }}
-                  >
-                    &#8249;
-                  </button>
-                  <button
-                    className="nav-btn next-btn"
-                    onClick={(e) => {
-                      e.stopPropagation();
-                      setSelectedImage(
-                        selectedImage < allImages.length - 1
-                          ? selectedImage + 1
-                          : 0
-                      );
-                      setIsAutoPlay(false);
-                    }}
-                  >
-                    &#8250;
-                  </button>
-                </div>
-              )}
+              
               {allImages.length > 0 && (
-                <div className="zoom-hint">🔍 Click để xem ảnh lớn</div>
-              )}
-              {allImages.length > 1 && (
-                <div className="image-controls">
-                  <button
-                    className={`auto-play-btn ${isAutoPlay ? "active" : ""}`}
-                    onClick={(e) => {
-                      e.stopPropagation();
-                      toggleAutoPlay();
-                    }}
-                    title={
-                      isAutoPlay ? "Tắt tự động chuyển" : "Bật tự động chuyển"
-                    }
-                  >
-                    {isAutoPlay ? "⏸️" : "▶️"}
-                  </button>
-                  <div className="image-counter">
-                    {selectedImage + 1} / {allImages.length}
-                  </div>
-                </div>
+                <button 
+                  onClick={() => setShowImageModal(true)}
+                  className="absolute top-4 right-4 bg-white/80 p-2 rounded-full text-gray-700 hover:text-brand-orange hover:bg-white shadow-sm opacity-0 group-hover:opacity-100 transition-all"
+                >
+                  <Maximize2 size={20} />
+                </button>
               )}
             </div>
 
+            {/* Thumbnails */}
             {allImages.length > 1 && (
-              <div className="image-thumbnails">
-                {allImages.map((image, index) => (
-                  <img
-                    key={index}
-                    src={image}
-                    alt={`${product.name} ${index + 1}`}
-                    className={`thumbnail ${
-                      selectedImage === index ? "active" : ""
-                    }`}
-                    onClick={() => handleThumbnailClick(index)}
-                  />
+              <div className="flex gap-2 sm:gap-4 overflow-x-auto pb-2">
+                {allImages.map((img, idx) => (
+                  <button 
+                    key={idx}
+                    onClick={() => { setSelectedImage(idx); setIsAutoPlay(false); }}
+                    className={`shrink-0 w-20 h-20 rounded border-2 overflow-hidden transition-all ${selectedImage === idx ? 'border-brand-orange' : 'border-gray-200 hover:border-gray-300'}`}
+                  >
+                    <img src={img} alt="" className="w-full h-full object-cover" />
+                  </button>
+                ))}
+                
+                {/* Autoplay toggler */}
+                <button 
+                  onClick={() => setIsAutoPlay(!isAutoPlay)}
+                  className="shrink-0 w-20 h-20 flex flex-col items-center justify-center bg-gray-50 border border-gray-200 rounded text-gray-500 hover:text-brand-orange hover:bg-gray-100 transition-colors"
+                >
+                  {isAutoPlay ? <Pause size={24} className="mb-1"/> : <Play size={24} className="mb-1"/>}
+                  <span className="text-xs">{isAutoPlay ? 'Dừng' : 'Tự động'}</span>
+                </button>
+              </div>
+            )}
+          </div>
+
+          {/* Right: Product Info */}
+          <div className="flex flex-col">
+            {category && (
+               <span className="inline-block px-3 py-1 bg-brand-light text-brand-navy text-xs font-bold uppercase tracking-wider rounded mb-4 w-fit">
+                 {category.name}
+               </span>
+            )}
+            <h1 className="text-2xl sm:text-3xl lg:text-4xl font-extrabold text-gray-900 mb-4 leading-tight">
+              {product.name}
+            </h1>
+            
+            <div className="flex items-end gap-4 mb-6 pb-6 border-b border-gray-100">
+              <span className="text-3xl font-bold text-brand-orange">
+                {product.price ? `${product.price.toLocaleString("vi-VN")} VND` : 'Liên hệ báo giá'}
+              </span>
+              <span className={`px-2.5 py-1 text-sm font-medium rounded ${product.inStock !== false ? 'bg-green-100 text-green-800' : 'bg-red-100 text-red-800'}`}>
+                {product.inStock !== false ? "✅ Còn hàng" : "❌ Hết hàng"}
+              </span>
+            </div>
+
+            {/* Specs */}
+            <div className="mb-8">
+              <h3 className="text-lg font-bold text-gray-900 mb-4 flex items-center">
+                <span className="w-1.5 h-5 bg-brand-orange mr-2 rounded"></span> Thông số sản phẩm
+              </h3>
+              <div className="grid grid-cols-1 sm:grid-cols-2 gap-y-3 gap-x-6 text-sm">
+                {[
+                  { label: "Mã SP", value: product.productCode },
+                  { label: "Thương hiệu", value: product.brand },
+                  { label: "Xuất xứ", value: product.origin },
+                  { label: "Chất liệu", value: product.material },
+                  { label: "Bảo hành", value: product.warranty },
+                ].map((spec, idx) => spec.value && (
+                  <div key={idx} className="flex border-b border-dashed border-gray-200 pb-2">
+                    <span className="text-gray-500 w-24 shrink-0">{spec.label}:</span>
+                    <span className="font-medium text-gray-900">{spec.value}</span>
+                  </div>
                 ))}
               </div>
-            )}
-          </div>
-
-          {/* Thông tin sản phẩm */}
-          <div className="product-info">
-            {category && (
-              <div className="product-category-badge">{category.name}</div>
-            )}
-
-            <h1 className="product-title">{product.name}</h1>
-
-            <div className="product-price-section">
-              <span className="current-price">
-                {product.price?.toLocaleString("vi-VN")} VND
-              </span>
-              <div className="stock-status">
-                <span
-                  className={`stock-badge ${
-                    product.inStock !== false ? "in-stock" : "out-stock"
-                  }`}
-                >
-                  {product.inStock !== false ? "✅ Còn hàng" : "❌ Hết hàng"}
-                </span>
-              </div>
             </div>
 
-            {/* Thông tin chi tiết */}
-            {(product.productCode ||
-              product.brand ||
-              product.origin ||
-              product.size ||
-              product.color ||
-              product.material ||
-              product.weight ||
-              product.warranty) && (
-              <div className="product-specifications">
-                <h3>📋 Thông tin cơ bản:</h3>
-                <div className="spec-grid">
-                  {product.productCode && (
-                    <div className="spec-item">
-                      <span className="spec-label">Mã sản phẩm:</span>
-                      <span className="spec-value">{product.productCode}</span>
+            {/* Variants Selection */}
+            {((product.colors && product.colors.length > 0) || (product.sizes && product.sizes.length > 0)) && (
+              <div className="mb-8 p-5 bg-gray-50 rounded-xl border border-gray-100">
+                {/* Colors */}
+                {product.colors && product.colors.length > 0 && (
+                  <div className="mb-5 last:mb-0">
+                    <div className="flex justify-between items-center mb-2">
+                       <span className="font-bold text-gray-900">Màu sắc:</span>
+                       <span className="text-sm font-medium text-brand-orange">{selectedColor ? selectedColor.name : "Vui lòng chọn"}</span>
                     </div>
-                  )}
-                  {product.brand && (
-                    <div className="spec-item">
-                      <span className="spec-label">Thương hiệu:</span>
-                      <span className="spec-value">{product.brand}</span>
+                    <div className="flex flex-wrap gap-3">
+                      {product.colors.map(color => (
+                        <button 
+                          key={color.id} 
+                          onClick={() => setSelectedColor(color)}
+                          className={`group flex items-center gap-2 px-3 py-1.5 rounded-full border-2 transition-all ${selectedColor?.id === color.id ? 'border-brand-orange bg-orange-50/50' : 'border-gray-200 hover:border-gray-300 bg-white'}`}
+                        >
+                          <span className={`w-5 h-5 rounded-full border shadow-sm ${selectedColor?.id === color.id ? 'border-brand-orange scale-110' : 'border-gray-300'}`} style={{backgroundColor: color.hex}}></span>
+                          <span className={`text-sm font-medium ${selectedColor?.id === color.id ? 'text-brand-orange' : 'text-gray-700'}`}>{color.name}</span>
+                        </button>
+                      ))}
                     </div>
-                  )}
-                  {product.origin && (
-                    <div className="spec-item">
-                      <span className="spec-label">Xuất xứ:</span>
-                      <span className="spec-value">{product.origin}</span>
-                    </div>
-                  )}
-                  {product.size && (
-                    <div className="spec-item">
-                      <span className="spec-label">Kích thước:</span>
-                      <span className="spec-value">{product.size}</span>
-                    </div>
-                  )}
-                  {product.color && (
-                    <div className="spec-item">
-                      <span className="spec-label">Màu sắc:</span>
-                      <span className="spec-value">{product.color}</span>
-                    </div>
-                  )}
-                  {product.material && (
-                    <div className="spec-item">
-                      <span className="spec-label">Chất liệu:</span>
-                      <span className="spec-value">{product.material}</span>
-                    </div>
-                  )}
-                  {product.weight && (
-                    <div className="spec-item">
-                      <span className="spec-label">Trọng lượng:</span>
-                      <span className="spec-value">{product.weight}</span>
-                    </div>
-                  )}
-                  {product.warranty && (
-                    <div className="spec-item">
-                      <span className="spec-label">Bảo hành:</span>
-                      <span className="spec-value">{product.warranty}</span>
-                    </div>
-                  )}
-                </div>
-              </div>
-            )}
-
-            {/* Chọn số lượng và mua hàng */}
-            {product.inStock !== false && (
-              <div className="purchase-section">
-                <div className="quantity-selector">
-                  <label>Số lượng:</label>
-                  <div className="quantity-controls">
-                    <button
-                      onClick={() => handleQuantityChange(-1)}
-                      className="quantity-btn"
-                      disabled={quantity <= 1}
-                    >
-                      -
-                    </button>
-                    <span className="quantity-display">{quantity}</span>
-                    <button
-                      onClick={() => handleQuantityChange(1)}
-                      className="quantity-btn"
-                    >
-                      +
-                    </button>
                   </div>
-                </div>
-
-                <div className="action-buttons">
-                  <button
-                    onClick={handleAddToCart}
-                    className="btn btn-add-cart"
-                  >
-                    🛒 Thêm vào giỏ hàng
-                  </button>
-                  <button onClick={handleBuyNow} className="btn btn-buy-now">
-                    💰 Mua ngay
-                  </button>
-                </div>
-              </div>
-            )}
-          </div>
-        </div>
-
-        {/* Mô tả sản phẩm */}
-        {product.description && (
-          <div className="product-description-section">
-            <h3>📝 Mô tả sản phẩm</h3>
-            <div className="product-description">{product.description}</div>
-          </div>
-        )}
-
-        {/* Nút quay lại */}
-        <div className="back-button-section">
-          <button onClick={() => navigate("/")} className="btn-back">
-            ← Quay lại trang chủ
-          </button>
-        </div>
-
-        {/* Image Modal */}
-        {showImageModal && allImages.length > 0 && (
-          <div className="image-modal" onClick={closeImageModal}>
-            <div className="image-modal-content">
-              <span className="image-modal-close" onClick={closeImageModal}>
-                &times;
-              </span>
-              <img
-                src={allImages[selectedImage]}
-                alt={product.name}
-                className="modal-image"
-                onClick={(e) => e.stopPropagation()}
-              />
-              <div className="modal-image-info">
-                <p>{product.name}</p>
-                {allImages.length > 1 && (
-                  <p>
-                    Ảnh {selectedImage + 1} / {allImages.length}
-                  </p>
+                )}
+                
+                {/* Sizes */}
+                {product.sizes && product.sizes.length > 0 && (
+                  <div className="mb-0">
+                    <div className="flex justify-between items-center mb-2">
+                       <span className="font-bold text-gray-900">Kích thước / Độ dày:</span>
+                       <span className="text-sm font-medium text-brand-orange">{selectedSize ? selectedSize : "Vui lòng chọn"}</span>
+                    </div>
+                    <div className="flex flex-wrap gap-2">
+                      {product.sizes.map(size => (
+                        <button 
+                          key={size} 
+                          onClick={() => setSelectedSize(size)}
+                          className={`px-4 py-2 rounded-lg text-sm font-bold border-2 transition-all ${selectedSize === size ? 'border-brand-orange bg-brand-orange text-white' : 'border-gray-200 hover:border-gray-300 text-gray-700 bg-white'}`}
+                        >
+                          {size}
+                        </button>
+                      ))}
+                    </div>
+                  </div>
                 )}
               </div>
-              {allImages.length > 1 && (
-                <div className="modal-navigation">
-                  <button
-                    className="modal-nav-btn prev"
-                    onClick={(e) => {
-                      e.stopPropagation();
-                      setSelectedImage(
-                        selectedImage > 0
-                          ? selectedImage - 1
-                          : allImages.length - 1
-                      );
-                    }}
+            )}
+
+            {/* Actions */}
+            {product.inStock !== false && (
+              <div className="bg-gray-50 p-6 rounded-lg border border-gray-200 mt-auto">
+                <div className="flex items-center mb-6">
+                  <span className="text-gray-700 font-medium mr-4">Số lượng:</span>
+                  <div className="flex items-center border border-gray-300 rounded bg-white overflow-hidden">
+                    <button onClick={() => setQuantity(Math.max(1, quantity - 1))} className="px-3 py-2 hover:bg-gray-100 transition-colors" disabled={quantity <= 1}>
+                      <Minus size={16} className={quantity <= 1 ? "text-gray-300" : "text-gray-600"}/>
+                    </button>
+                    <span className="w-12 text-center font-medium border-x border-gray-300 py-2">{quantity}</span>
+                    <button onClick={() => setQuantity(quantity + 1)} className="px-3 py-2 hover:bg-gray-100 transition-colors">
+                      <Plus size={16} className="text-gray-600"/>
+                    </button>
+                  </div>
+                </div>
+
+                <div className="flex flex-col sm:flex-row gap-4">
+                  <button 
+                    onClick={() => { 
+                      if (product.colors?.length > 0 && !selectedColor) return alert("Vui lòng chọn màu sắc sản phẩm!");
+                      if (product.sizes?.length > 0 && !selectedSize) return alert("Vui lòng chọn kích thước/độ dày!");
+                      addToCart({ ...product, selectedColor, selectedSize }, quantity); 
+                      setShowNotification(true); 
+                    }} 
+                    className="flex-1 flex items-center justify-center bg-brand-navy hover:bg-brand-blue text-white font-bold py-3 px-6 rounded transition-colors shadow-sm"
                   >
-                    &#8249;
+                    <ShoppingCart size={20} className="mr-2" /> Thêm Vào Giỏ
                   </button>
-                  <button
-                    className="modal-nav-btn next"
-                    onClick={(e) => {
-                      e.stopPropagation();
-                      setSelectedImage(
-                        selectedImage < allImages.length - 1
-                          ? selectedImage + 1
-                          : 0
-                      );
-                    }}
+                  <button 
+                    onClick={() => { 
+                      if (product.colors?.length > 0 && !selectedColor) return alert("Vui lòng chọn màu sắc sản phẩm!");
+                      if (product.sizes?.length > 0 && !selectedSize) return alert("Vui lòng chọn kích thước/độ dày!");
+                      addToCart({ ...product, selectedColor, selectedSize }, quantity); 
+                      navigate("/cart"); 
+                    }} 
+                    className="flex-1 flex items-center justify-center bg-brand-orange hover:bg-orange-600 text-white font-bold py-3 px-6 rounded transition-colors shadow-sm"
                   >
-                    &#8250;
+                    <CreditCard size={20} className="mr-2" /> Mua Ngay
                   </button>
                 </div>
-              )}
-            </div>
+              </div>
+            )}
           </div>
-        )}
+        </div>
 
-        {/* Notification Modal */}
-        {showNotification && (
-          <div className="notification-modal" onClick={closeNotification}>
-            <div
-              className="notification-content"
-              onClick={(e) => e.stopPropagation()}
-            >
-              <div className="notification-icon">
-                <div className="icon-circle">
-                  <svg
-                    width="24"
-                    height="24"
-                    viewBox="0 0 24 24"
-                    fill="none"
-                    xmlns="http://www.w3.org/2000/svg"
-                  >
-                    <path
-                      d="M12 2C13.1 2 14 2.9 14 4C14 5.1 13.1 6 12 6C10.9 6 10 5.1 10 4C10 2.9 10.9 2 12 2ZM21 9V7L15 1H5C3.89 1 3 1.89 3 3V21C3 22.1 3.89 23 5 23H19C20.1 23 21 22.1 21 21V9ZM19 21H5V3H14V9H19V21Z"
-                      fill="currentColor"
-                    />
-                  </svg>
-                </div>
-              </div>
-
-              <div className="notification-header">
-                <h3>Thông báo quan trọng</h3>
-                <button
-                  className="notification-close"
-                  onClick={closeNotification}
-                  aria-label="Đóng thông báo"
-                >
-                  <svg
-                    width="18"
-                    height="18"
-                    viewBox="0 0 24 24"
-                    fill="none"
-                    xmlns="http://www.w3.org/2000/svg"
-                  >
-                    <path
-                      d="M18 6L6 18M6 6L18 18"
-                      stroke="currentColor"
-                      strokeWidth="2"
-                      strokeLinecap="round"
-                      strokeLinejoin="round"
-                    />
-                  </svg>
-                </button>
-              </div>
-
-              <div className="notification-body">
-                <h4>Cửa hàng Mica Tấn Phú Thành</h4>
-                <p>
-                  Cảm ơn bạn đã quan tâm đến sản phẩm của chúng tôi! Để được tư
-                  vấn chi tiết và mua hàng với giá tốt nhất, bạn vui lòng ghé
-                  thăm cửa hàng trực tiếp hoặc liên hệ tới số điện thoại
-                  <strong> 0909 123 456</strong>. Chúng tôi luôn sẵn sàng
-                  hỗ trợ bạn 24/7.
-                </p>
-                <div className="notification-features">
-                  <div className="feature-item">
-                    <span className="feature-icon">✅</span>
-                    <span>Tư vấn miễn phí</span>
-                  </div>
-                  <div className="feature-item">
-                    <span className="feature-icon">🎯</span>
-                    <span>Giá cả cạnh tranh</span>
-                  </div>
-                  <div className="feature-item">
-                    <span className="feature-icon">🚚</span>
-                    <span>Hỗ trợ vận chuyển</span>
-                  </div>
-                </div>
-              </div>
-
-              <div className="notification-footer">
-                <button
-                  className="btn btn-notification-secondary"
-                  onClick={closeNotification}
-                >
-                  Để sau
-                </button>
-                <button
-                  className="btn btn-notification-primary"
-                  onClick={closeNotification}
-                >
-                  Đã hiểu
-                </button>
-              </div>
+        {/* Description */}
+        {product.description && (
+          <div className="mt-16">
+            <h2 className="text-2xl font-bold text-gray-900 mb-6 flex items-center border-b pb-4">
+              📝 Chi tiết sản phẩm
+            </h2>
+            <div className="prose max-w-none text-gray-700 leading-relaxed whitespace-pre-wrap">
+              {product.description}
             </div>
           </div>
         )}
       </div>
-      <Footer />
-    </div>
-    
-    
-  );
 
+      {/* Full Image Modal */}
+      {showImageModal && allImages.length > 0 && (
+        <div className="fixed inset-0 z-[100] bg-black/90 flex items-center justify-center p-4">
+          <button onClick={() => setShowImageModal(false)} className="absolute top-4 right-4 text-white/70 hover:text-white p-2">
+            <X size={32} />
+          </button>
+          
+          <img src={allImages[selectedImage]} alt={product.name} className="max-w-full max-h-[90vh] object-contain" />
+          
+          {allImages.length > 1 && (
+            <>
+              <button 
+                onClick={(e) => { e.stopPropagation(); setSelectedImage(prev => prev > 0 ? prev - 1 : allImages.length - 1); }}
+                className="absolute left-4 top-1/2 -translate-y-1/2 text-white/50 hover:text-white bg-black/50 p-3 rounded-full"
+              >
+                <ChevronRight size={36} className="rotate-180" />
+              </button>
+              <button 
+                onClick={(e) => { e.stopPropagation(); setSelectedImage(prev => prev < allImages.length - 1 ? prev + 1 : 0); }}
+                className="absolute right-4 top-1/2 -translate-y-1/2 text-white/50 hover:text-white bg-black/50 p-3 rounded-full"
+              >
+                <ChevronRight size={36} />
+              </button>
+              <div className="absolute bottom-4 left-1/2 -translate-x-1/2 text-white/70 bg-black/50 px-4 py-1.5 rounded-full text-sm tracking-widest font-mono">
+                {selectedImage + 1} / {allImages.length}
+              </div>
+            </>
+          )}
+        </div>
+      )}
+
+      {/* Notification Modal */}
+      {showNotification && (
+        <div className="fixed inset-0 z-[100] bg-black/50 flex items-center justify-center p-4 backdrop-blur-sm" onClick={() => setShowNotification(false)}>
+          <div className="bg-white rounded-xl shadow-2xl max-w-md w-full overflow-hidden" onClick={e => e.stopPropagation()}>
+            <div className="bg-brand-navy p-6 text-center relative">
+              <button onClick={() => setShowNotification(false)} className="absolute top-4 right-4 text-white/70 hover:text-white">
+                <X size={24} />
+              </button>
+              <div className="w-16 h-16 bg-white rounded-full flex items-center justify-center mx-auto mb-4 text-green-500 shadow-sm border-[3px] border-green-100">
+                <ShoppingCart size={32} />
+              </div>
+              <h3 className="text-xl font-bold text-white">Thêm vào giỏ thành công!</h3>
+            </div>
+            <div className="p-6">
+              <p className="text-gray-600 text-center mb-8 leading-relaxed">
+                Đã thêm <strong>{quantity} {product.name}</strong> vào giỏ hàng.
+              </p>
+              <div className="flex flex-col sm:flex-row gap-3">
+                <button onClick={() => setShowNotification(false)} className="flex-1 bg-gray-100 hover:bg-gray-200 text-gray-800 font-bold py-3 px-4 rounded transition-colors text-center text-sm">
+                  Tiếp Tục Chọn Đồ
+                </button>
+                <Link to="/cart" className="flex-1 bg-brand-orange hover:bg-orange-600 text-white font-bold py-3 px-4 rounded transition-colors text-center text-sm shadow-md">
+                  Tới Giỏ Hàng Ngay
+                </Link>
+              </div>
+            </div>
+          </div>
+        </div>
+      )}
+    </div>
+  );
 }
