@@ -40,22 +40,81 @@ export function HomePage() {
         </div>
       </section>
 
-      {/* Features */}
-      <section className="bg-white py-12 border-b">
+      {/* Features - Horizontal Static on Desktop, Auto-scroll on Mobile/Tablet */}
+      <section className="bg-white py-12 border-b overflow-hidden">
         <div className="max-w-7xl mx-auto px-4">
-          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-8">
-            {[
-              { icon: Truck, title: "Giao Hàng Nhanh", desc: "Hỗ trợ vận chuyển tận nơi nội thành TP.HCM" },
-              { icon: ShieldCheck, title: "Hàng Chính Hãng", desc: "Sản phẩm chất lượng cao từ các nhà máy uy tín" },
-              { icon: Scissors, title: "Cắt Theo Yêu Cầu", desc: "Hỗ trợ cắt ALU, MICA theo kích thước chuẩn xác" },
-              { icon: ThumbsUp, title: "Giá Cả Cạnh Tranh", desc: "Chiết khấu cao cho đơn hàng số lượng lớn" },
-            ].map((feature, idx) => (
-              <div key={idx} className="flex flex-col items-center text-center p-6 bg-gray-50 rounded-lg">
-                <feature.icon size={48} className="text-brand-orange mb-4" />
-                <h3 className="text-lg font-bold text-gray-900 mb-2">{feature.title}</h3>
-                <p className="text-gray-600 text-sm">{feature.desc}</p>
-              </div>
-            ))}
+          <style dangerouslySetInnerHTML={{ __html: `
+            @keyframes marquee {
+              0% { transform: translateX(0); }
+              100% { transform: translateX(-50%); }
+            }
+            .animate-marquee {
+              display: flex;
+              width: max-content;
+              animation: marquee 25s linear infinite;
+            }
+            @media (min-width: 1024px) {
+              .animate-marquee {
+                animation: none;
+                display: block;
+                width: 100%;
+                transform: none !important;
+              }
+            }
+            .feature-set {
+              display: flex;
+              flex-shrink: 0;
+            }
+            @media (min-width: 1024px) {
+              .feature-set {
+                display: grid;
+                grid-template-columns: repeat(4, 1fr);
+                gap: 2rem;
+                width: 100%;
+              }
+              .feature-set:nth-child(n+2) {
+                display: none;
+              }
+            }
+            .feature-item {
+              flex-shrink: 0;
+              width: 280px;
+              margin-right: 2rem;
+            }
+            @media (min-width: 1024px) {
+              .feature-item {
+                width: 100%;
+                margin-right: 0;
+              }
+            }
+          `}} />
+          
+          <div className="relative">
+            <div className="animate-marquee">
+              {/* Render features twice for seamless loop, hide second set on desktop */}
+              {[...Array(2)].map((_, i) => (
+                <div key={i} className={`feature-set ${i > 0 ? 'lg:hidden' : ''}`}>
+                  {[
+                    { icon: Truck, title: "Giao Hàng Nhanh", desc: "Hỗ trợ vận chuyển tận nơi nội thành TP.HCM" },
+                    { icon: ShieldCheck, title: "Hàng Chính Hãng", desc: "Sản phẩm chất lượng cao từ các nhà máy uy tín" },
+                    { icon: Scissors, title: "Cắt Theo Yêu Cầu", desc: "Hỗ trợ cắt ALU, MICA theo kích thước chuẩn xác" },
+                    { icon: ThumbsUp, title: "Giá Cả Cạnh Tranh", desc: "Chiết khấu cao cho đơn hàng số lượng lớn" },
+                  ].map((feature, idx) => (
+                    <div key={`${i}-${idx}`} className="feature-item flex flex-col items-center text-center p-6 bg-gray-50 rounded-2xl border border-gray-100 shadow-sm transition-transform hover:-translate-y-1">
+                      <div className="w-16 h-16 bg-white rounded-full flex items-center justify-center mb-4 shadow-sm">
+                        <feature.icon size={32} className="text-brand-orange" />
+                      </div>
+                      <h3 className="text-base font-bold text-gray-900 mb-1 tracking-tight">{feature.title}</h3>
+                      <p className="text-gray-500 text-xs leading-relaxed">{feature.desc}</p>
+                    </div>
+                  ))}
+                </div>
+              ))}
+            </div>
+
+            {/* Fading Edges for Scroll Effect on smaller screens */}
+            <div className="absolute inset-y-0 left-0 w-16 bg-gradient-to-r from-white to-transparent pointer-events-none z-10 lg:hidden"></div>
+            <div className="absolute inset-y-0 right-0 w-16 bg-gradient-to-l from-white to-transparent pointer-events-none z-10 lg:hidden"></div>
           </div>
         </div>
       </section>

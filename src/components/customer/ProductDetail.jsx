@@ -19,8 +19,23 @@ export function ProductDetail() {
   const [selectedColor, setSelectedColor] = useState(null);
   const [selectedSize, setSelectedSize] = useState(null);
   const [showImageModal, setShowImageModal] = useState(false);
-  const [isAutoPlay, setIsAutoPlay] = useState(false);
   const [showNotification, setShowNotification] = useState(false);
+  const [isAutoPlay, setIsAutoPlay] = useState(false);
+  const [selectionError, setSelectionError] = useState(null);
+
+  // Clear error when selections change
+  useEffect(() => {
+    if (selectionError) setSelectionError(null);
+  }, [selectedColor, selectedSize]);
+
+  // Clean transition for error message
+  useEffect(() => {
+    let timer;
+    if (selectionError) {
+      timer = setTimeout(() => setSelectionError(null), 3000);
+    }
+    return () => clearTimeout(timer);
+  }, [selectionError]);
 
   useEffect(() => {
     const fetchProductDetail = async () => {
@@ -65,6 +80,7 @@ export function ProductDetail() {
     if (e.key === "Escape") {
       setShowImageModal(false);
       setShowNotification(false);
+      setSelectionError(null);
     }
   }, []);
 
@@ -271,18 +287,25 @@ export function ProductDetail() {
                     <button onClick={() => setQuantity(Math.max(1, quantity - 1))} className="px-3 py-2 hover:bg-gray-100 transition-colors" disabled={quantity <= 1}>
                       <Minus size={16} className={quantity <= 1 ? "text-gray-300" : "text-gray-600"}/>
                     </button>
-                    <span className="w-12 text-center font-medium border-x border-gray-300 py-2">{quantity}</span>
+                    <span className="w-16 text-center font-medium border-x border-gray-300 py-2">{quantity}</span>
                     <button onClick={() => setQuantity(quantity + 1)} className="px-3 py-2 hover:bg-gray-100 transition-colors">
                       <Plus size={16} className="text-gray-600"/>
                     </button>
                   </div>
                 </div>
 
+                {selectionError && (
+                  <div className="mb-4 flex items-center gap-2 p-3 bg-red-50 border border-red-100 rounded-lg text-red-600 text-sm font-medium animate-shake">
+                    <AlertCircle size={18} />
+                    {selectionError}
+                  </div>
+                )}
+
                 <div className="flex flex-col sm:flex-row gap-4">
                   <button 
                     onClick={() => { 
-                      if (product.colors?.length > 0 && !selectedColor) return alert("Vui lòng chọn màu sắc sản phẩm!");
-                      if (product.sizes?.length > 0 && !selectedSize) return alert("Vui lòng chọn kích thước/độ dày!");
+                      if (product.colors?.length > 0 && !selectedColor) return setSelectionError("Vui lòng chọn màu sắc sản phẩm!");
+                      if (product.sizes?.length > 0 && !selectedSize) return setSelectionError("Vui lòng chọn kích thước/độ dày!");
                       addToCart({ ...product, selectedColor, selectedSize }, quantity); 
                       setShowNotification(true); 
                     }} 
@@ -292,8 +315,8 @@ export function ProductDetail() {
                   </button>
                   <button 
                     onClick={() => { 
-                      if (product.colors?.length > 0 && !selectedColor) return alert("Vui lòng chọn màu sắc sản phẩm!");
-                      if (product.sizes?.length > 0 && !selectedSize) return alert("Vui lòng chọn kích thước/độ dày!");
+                      if (product.colors?.length > 0 && !selectedColor) return setSelectionError("Vui lòng chọn màu sắc sản phẩm!");
+                      if (product.sizes?.length > 0 && !selectedSize) return setSelectionError("Vui lòng chọn kích thước/độ dày!");
                       addToCart({ ...product, selectedColor, selectedSize }, quantity); 
                       navigate("/cart"); 
                     }} 

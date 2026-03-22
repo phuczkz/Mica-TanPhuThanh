@@ -42,45 +42,85 @@ export function CategorySection({ products }) {
               </Link>
             </div>
 
-            {/* Grid */}
-            <div className="p-6">
-              <div className="grid grid-cols-2 lg:grid-cols-4 gap-4 sm:gap-6">
+            {/* Horizontal Scroll Container */}
+            <div className="p-4 sm:p-6 bg-white relative">
+              <div className="flex overflow-x-auto gap-4 sm:gap-6 pb-6 snap-x snap-mandatory scrollbar-hide" style={{ scrollbarWidth: 'none', msOverflowStyle: 'none' }}>
+                {/* Ẩn scrollbar cho Chrome/Safari */}
+                <style dangerouslySetInnerHTML={{ __html: `
+                  .scrollbar-hide::-webkit-scrollbar { display: none; }
+                `}} />
+                
                 {topProducts.map((product) => (
-                  <Link key={product.id} to={`/products/${product.id}`} className="group flex flex-col h-full bg-white rounded-lg border border-gray-100 hover:border-brand-orange hover:shadow-md transition-all duration-300">
-                    <div className="aspect-square w-full relative overflow-hidden bg-gray-50 rounded-t-lg">
+                  <Link 
+                    key={product.id} 
+                    to={`/products/${product.id}`} 
+                    className="group relative flex flex-col flex-shrink-0 w-[180px] sm:w-[240px] bg-white rounded-2xl border border-slate-100 shadow-sm hover:shadow-xl hover:-translate-y-1.5 transition-all duration-500 ease-out overflow-hidden snap-start"
+                  >
+                    {/* Image Container with Overlay */}
+                    <div className="aspect-square w-full relative overflow-hidden bg-slate-50 flex items-center justify-center p-3">
                       <img 
                         src={product.imageBase64 || product.image || "/logo.png"} 
                         alt={product.name} 
-                        className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500"
+                        className="w-full h-full object-contain group-hover:scale-110 transition-transform duration-700 ease-in-out"
                       />
+                      
+                      {/* Glassmorphism Stock Badge */}
+                      <div className="absolute top-2 left-2 z-10">
+                        {product.inStock !== false ? (
+                          <span className="px-2.5 py-1 text-[9px] font-bold uppercase tracking-wider bg-white/80 backdrop-blur-md text-emerald-600 border border-white/50 rounded-full shadow-sm">
+                            ● Còn hàng
+                          </span>
+                        ) : (
+                          <span className="px-2.5 py-1 text-[9px] font-bold uppercase tracking-wider bg-white/80 backdrop-blur-md text-rose-500 border border-white/50 rounded-full shadow-sm">
+                            ○ Hết hàng
+                          </span>
+                        )}
+                      </div>
+
+                      {/* Hover Action Overlay */}
+                      <div className="absolute inset-0 bg-brand-navy/10 opacity-0 group-hover:opacity-100 transition-opacity duration-300 flex items-center justify-center">
+                         <div className="bg-white p-2.5 rounded-full shadow-lg transform translate-y-3 group-hover:translate-y-0 transition-transform duration-300">
+                           <ChevronRight size={18} className="text-brand-orange" />
+                         </div>
+                      </div>
                     </div>
-                    <div className="p-4 flex flex-col flex-grow">
-                      <h4 className="text-sm font-semibold text-gray-800 line-clamp-2 mb-2 group-hover:text-brand-navy">
+
+                    {/* Product Body */}
+                    <div className="p-4 flex flex-col flex-grow bg-white">
+                      <div className="mb-1.5">
+                        <span className="text-[9px] font-bold text-slate-400 uppercase tracking-widest">
+                          {category.name}
+                        </span>
+                      </div>
+                      
+                      <h4 className="text-xs sm:text-sm font-bold text-slate-800 line-clamp-2 mb-2 leading-tight min-h-[32px] group-hover:text-brand-orange transition-colors">
                         {product.name}
                       </h4>
-                      <div className="mt-auto">
-                        <div className="text-brand-orange font-bold text-base sm:text-lg mb-2">
-                          {product.price ? `${product.price.toLocaleString("vi-VN")} đ` : 'Liên hệ báo giá'}
-                        </div>
-                        <div className="text-xs font-medium">
-                          {product.inStock !== false ? (
-                            <span className="text-green-600 bg-green-50 px-2 py-1 rounded">Còn hàng</span>
-                          ) : (
-                            <span className="text-red-500 bg-red-50 px-2 py-1 rounded">Hết hàng</span>
-                          )}
-                        </div>
+                      
+                      <div className="mt-auto flex flex-col gap-0.5">
+                         <span className="text-[10px] text-slate-400 font-medium">Giá báo tốt nhất</span>
+                         <div className="text-brand-orange font-black text-base sm:text-lg">
+                           {product.price ? `${product.price.toLocaleString("vi-VN")} đ` : 'Liên hệ'}
+                         </div>
                       </div>
                     </div>
                   </Link>
                 ))}
-              </div>
-              
-              {/* Mobile view all link */}
-              <div className="mt-6 text-center sm:hidden">
-                <Link to={`/products?category=${category.id}`} className="inline-flex items-center justify-center w-full py-2.5 border border-brand-orange text-brand-orange rounded font-medium hover:bg-brand-orange hover:text-white transition-colors">
-                  Xem tất cả ({categoryProducts.length})
+
+                {/* "View All" Card at the end of scroll */}
+                <Link 
+                  to={`/products?category=${category.id}`}
+                  className="flex-shrink-0 w-[140px] sm:w-[180px] flex flex-col items-center justify-center group bg-slate-50 rounded-2xl border-2 border-dashed border-slate-200 hover:border-brand-orange hover:bg-orange-50 transition-all duration-300 snap-start"
+                >
+                  <div className="w-10 h-10 bg-white rounded-full flex items-center justify-center mb-2.5 shadow-sm group-hover:bg-brand-orange group-hover:text-white transition-colors">
+                    <ChevronRight size={20} />
+                  </div>
+                  <span className="font-bold text-xs text-slate-600 group-hover:text-brand-orange transition-colors text-center px-4">Xem tất cả {category.name}</span>
                 </Link>
               </div>
+              
+              {/* Desktop Scroll Hints (Gradients) */}
+              <div className="absolute right-0 top-0 bottom-0 w-16 bg-gradient-to-l from-white to-transparent pointer-events-none z-10 hidden sm:block"></div>
             </div>
           </div>
         );

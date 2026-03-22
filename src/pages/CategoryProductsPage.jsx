@@ -67,8 +67,19 @@ export default function CategoryProductsPage() {
 
   const handleAddToCart = (e, product) => {
     e.preventDefault(); // prevent navigation since it's inside a Link
-    addToCart(product, 1);
-    setAddedProduct(product);
+    
+    // Check if product has variants (colors or sizes)
+    const hasVariants = (product.colors && product.colors.length > 0) || 
+                        (product.sizes && product.sizes.length > 0);
+    
+    if (hasVariants) {
+      // If has variants, must go to detail page to select
+      navigate(`/products/${product.id}`);
+    } else {
+      // If no variants, add to cart directly
+      addToCart(product, 1);
+      setAddedProduct(product);
+    }
   };
 
   if (loading) {
@@ -177,45 +188,69 @@ export default function CategoryProductsPage() {
             ) : (
               <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-3 xl:grid-cols-4 gap-4 sm:gap-6">
                 {filteredProducts.map(product => (
-                  <Link key={product.id} to={`/products/${product.id}`} className="group flex flex-col bg-white rounded-xl border border-gray-100 hover:border-brand-orange hover:shadow-lg transition-all duration-300 overflow-hidden relative">
-                    <div className="aspect-square w-full relative overflow-hidden bg-gray-50">
+                  <Link 
+                    key={product.id} 
+                    to={`/products/${product.id}`} 
+                    className="group relative flex flex-col h-full bg-white rounded-2xl border border-slate-100 shadow-sm hover:shadow-xl hover:-translate-y-1.5 transition-all duration-500 ease-out overflow-hidden"
+                  >
+                    {/* Image Container with Overlay */}
+                    <div className="aspect-square w-full relative overflow-hidden bg-slate-50 flex items-center justify-center p-3">
                       <img 
                         src={product.imageBase64 || product.image || "/logo.png"} 
                         alt={product.name} 
-                        className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500"
+                        className="w-full h-full object-contain group-hover:scale-110 transition-transform duration-700 ease-in-out"
                       />
+                      
+                      {/* Glassmorphism Stock Badge */}
+                      <div className="absolute top-2 left-2 z-10">
+                        {product.inStock !== false ? (
+                          <span className="px-2.5 py-1 text-[9px] font-bold uppercase tracking-wider bg-white/70 backdrop-blur-md text-emerald-600 border border-white/50 rounded-full shadow-sm">
+                            ● Còn hàng
+                          </span>
+                        ) : (
+                          <span className="px-2.5 py-1 text-[9px] font-bold uppercase tracking-wider bg-white/70 backdrop-blur-md text-rose-500 border border-white/50 rounded-full shadow-sm">
+                            ○ Hết hàng
+                          </span>
+                        )}
+                      </div>
+
                       {/* Add to cart overlay button on desktop */}
                       <button 
-                         onClick={(e) => handleAddToCart(e, product)}
-                         title="Thêm vào giỏ hàng"
-                         className="absolute bottom-4 right-4 bg-brand-orange text-white p-3 rounded-full shadow-lg opacity-0 translate-y-4 group-hover:opacity-100 group-hover:translate-y-0 transition-all duration-300 hover:bg-orange-600 hidden lg:flex"
+                        onClick={(e) => handleAddToCart(e, product)}
+                        title="Thêm vào giỏ hàng"
+                        className="absolute bottom-3 right-3 bg-brand-orange text-white p-2.5 rounded-full shadow-lg opacity-0 translate-y-3 group-hover:opacity-100 group-hover:translate-y-0 transition-all duration-300 hover:bg-orange-600 hidden lg:flex items-center justify-center z-20"
                       >
-                         <ShoppingCart size={20} />
+                        <ShoppingCart size={18} />
                       </button>
                     </div>
-                    <div className="p-4 flex flex-col flex-grow">
-                      <h4 className="text-sm font-semibold text-gray-800 line-clamp-2 mb-2 group-hover:text-brand-navy min-h-[40px]">
+
+                    {/* Product Body */}
+                    <div className="p-4 flex flex-col flex-grow bg-white">
+                      <div className="mb-1.5">
+                        <span className="text-[9px] font-bold text-slate-400 uppercase tracking-widest">
+                          {categories.find(c => c.id === product.category)?.name || "Sản phẩm"}
+                        </span>
+                      </div>
+                      
+                      <h4 className="text-xs sm:text-sm font-bold text-slate-800 line-clamp-2 mb-2 leading-tight min-h-[32px] group-hover:text-brand-orange transition-colors">
                         {product.name}
                       </h4>
-                      <div className="mt-auto">
-                        <div className="text-brand-orange font-bold text-lg mb-2">
-                          {product.price ? `${product.price.toLocaleString("vi-VN")} đ` : 'Liên hệ báo giá'}
+                      
+                      <div className="mt-auto flex items-end justify-between gap-1">
+                        <div className="flex flex-col gap-0.5">
+                           <span className="text-[10px] text-slate-400 font-medium">Giá báo tốt nhất</span>
+                           <div className="text-brand-orange font-black text-base sm:text-lg">
+                             {product.price ? `${product.price.toLocaleString("vi-VN")} đ` : 'Liên hệ'}
+                           </div>
                         </div>
-                        <div className="flex justify-between items-center text-xs font-medium">
-                          {product.inStock !== false ? (
-                            <span className="text-green-600 bg-green-50 px-2 py-1 rounded">Còn hàng</span>
-                          ) : (
-                            <span className="text-red-500 bg-red-50 px-2 py-1 rounded">Hết hàng</span>
-                          )}
-                          
-                          {/* Add to cart mobile */}
-                          <button 
-                             onClick={(e) => handleAddToCart(e, product)}
-                             className="lg:hidden text-brand-orange bg-orange-50 hover:bg-orange-100 p-2 rounded"
-                          >
-                             <ShoppingCart size={16} />
-                          </button>
-                        </div>
+
+                        {/* Add to cart mobile */}
+                        <button 
+                          onClick={(e) => handleAddToCart(e, product)}
+                          className="lg:hidden text-brand-orange bg-orange-50 hover:bg-orange-100 p-2 rounded-xl transition-colors"
+                        >
+                          <ShoppingCart size={16} />
+                        </button>
                       </div>
                     </div>
                   </Link>

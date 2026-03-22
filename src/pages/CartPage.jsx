@@ -9,7 +9,7 @@ export function CartPage() {
   const navigate = useNavigate();
   const [showCheckoutModal, setShowCheckoutModal] = useState(false);
   const [isSubmitting, setIsSubmitting] = useState(false);
-  
+
   // Thông tin khách hàng form
   const [customerInfo, setCustomerInfo] = useState({
     name: "",
@@ -30,7 +30,7 @@ export function CartPage() {
   const confirmCheckout = async (e) => {
     e.preventDefault();
     if (isSubmitting) return;
-    
+
     setIsSubmitting(true);
     try {
       // 1. Chuẩn bị dữ liệu order
@@ -52,13 +52,13 @@ export function CartPage() {
 
       // 2. Lưu vào Firebase
       await createOrder(orderPayload);
-      
+
       // 3. Thông báo và reset
       alert("Đã gửi Yêu cầu Báo Giá thành công! Chúng tôi sẽ liên hệ lại với bạn trong thời gian sớm nhất.");
       clearCart();
       setShowCheckoutModal(false);
       navigate("/");
-      
+
     } catch (error) {
       console.error("Lỗi chi tiết CreateOrder:", error);
       alert(`Đã xảy ra lỗi: ${error.message || 'Vui lòng thử lại sau!'}`);
@@ -105,78 +105,78 @@ export function CartPage() {
             {/* Items List */}
             <div className="relative">
               <div className="divide-y divide-gray-100 max-h-[60vh] overflow-y-auto [&::-webkit-scrollbar]:hidden [-ms-overflow-style:none] [scrollbar-width:none]">
-              {cartItems.map((item) => (
-                <div key={item.cartId} className="grid grid-cols-1 md:grid-cols-12 gap-4 p-6 items-center relative">
-                  {/* Mobile delete button */}
-                  <button onClick={() => removeFromCart(item.cartId)} className="md:hidden absolute top-4 right-4 text-gray-400 hover:text-red-500 p-2">
-                    <Trash2 size={20} />
-                  </button>
-
-                  <div className="col-span-1 md:col-span-5 flex items-center gap-4">
-                    <div className="w-24 h-24 shrink-0 bg-gray-50 rounded-lg overflow-hidden border border-gray-100">
-                      {item.imageBase64 ? (
-                        <img src={item.imageBase64} alt={item.name} className="w-full h-full object-cover" />
-                      ) : (
-                        <div className="w-full h-full flex items-center justify-center text-gray-400 text-xs">No image</div>
-                      )}
-                    </div>
-                    <div className="flex flex-col">
-                      {item.productCode && <span className="text-xs text-gray-500 font-medium mb-1">Mã: {item.productCode}</span>}
-                      <Link to={`/products/${item.id}`} className="font-bold text-gray-900 hover:text-brand-orange text-lg line-clamp-2">
-                        {item.name}
-                      </Link>
-                      {/* Variants Display */}
-                      {(item.selectedColor || item.selectedSize) && (
-                        <div className="flex flex-wrap gap-2 mt-2">
-                          {item.selectedColor && (
-                            <span className="inline-flex items-center gap-1.5 text-xs font-medium bg-gray-100 px-2 py-1 rounded text-gray-700 shadow-sm border border-gray-200 cursor-default" title="Màu sắc đã chọn">
-                              <span className="w-2.5 h-2.5 rounded-full border border-gray-300" style={{ backgroundColor: item.selectedColor.hex }}></span>
-                              {item.selectedColor.name}
-                            </span>
-                          )}
-                          {item.selectedSize && (
-                            <span className="inline-flex items-center text-xs font-bold bg-gray-100 px-2.5 py-1 rounded text-gray-700 shadow-sm border border-gray-200 cursor-default" title="Kích thước / Độ dày">
-                              {item.selectedSize}
-                            </span>
-                          )}
-                        </div>
-                      )}
-                      {item.category && <span className="text-sm text-gray-500 mt-1">{item.category}</span>}
-                    </div>
-                  </div>
-
-                  <div className="col-span-1 md:col-span-2 flex md:justify-center items-center">
-                    <span className="md:hidden text-gray-500 w-24">Đơn giá:</span>
-                    <span className="font-semibold text-gray-700">
-                      {item.price ? `${item.price.toLocaleString("vi-VN")} đ` : "Liên hệ"}
-                    </span>
-                  </div>
-
-                  <div className="col-span-1 md:col-span-2 flex md:justify-center items-center">
-                    <span className="md:hidden text-gray-500 w-24">Số lượng:</span>
-                    <div className="flex items-center border border-gray-300 rounded overflow-hidden w-28">
-                      <button onClick={() => updateQuantity(item.cartId, item.quantity - 1)} disabled={item.quantity <= 1} className="w-8 h-8 flex items-center justify-center hover:bg-gray-100 disabled:opacity-50 text-gray-600 transition-colors">
-                        <Minus size={14} />
-                      </button>
-                      <input type="number" readOnly value={item.quantity} className="w-12 h-8 text-center font-medium border-x border-gray-300 focus:outline-none" />
-                      <button onClick={() => updateQuantity(item.cartId, item.quantity + 1)} className="w-8 h-8 flex items-center justify-center hover:bg-gray-100 text-gray-600 transition-colors">
-                        <Plus size={14} />
-                      </button>
-                    </div>
-                  </div>
-
-                  <div className="col-span-1 md:col-span-3 flex justify-between md:justify-end items-center shrink-0">
-                    <span className="md:hidden text-gray-500 w-24">Tạm tính:</span>
-                    <span className="font-bold text-brand-orange text-lg whitespace-nowrap">
-                      {item.price ? `${(item.price * item.quantity).toLocaleString("vi-VN")} đ` : "Liên hệ"}
-                    </span>
-
-                    <button onClick={() => removeFromCart(item.cartId)} className="hidden md:block ml-4 text-gray-400 hover:text-red-500 transition-colors shrink-0" title="Xóa sản phẩm">
+                {cartItems.map((item) => (
+                  <div key={item.cartId} className="grid grid-cols-1 md:grid-cols-12 gap-4 p-6 items-center relative">
+                    {/* Mobile delete button */}
+                    <button onClick={() => removeFromCart(item.cartId)} className="md:hidden absolute top-4 right-4 text-gray-400 hover:text-red-500 p-2">
                       <Trash2 size={20} />
                     </button>
+
+                    <div className="col-span-1 md:col-span-5 flex items-center gap-4">
+                      <div className="w-24 h-24 shrink-0 bg-gray-50 rounded-lg overflow-hidden border border-gray-100">
+                        {item.imageBase64 ? (
+                          <img src={item.imageBase64} alt={item.name} className="w-full h-full object-cover" />
+                        ) : (
+                          <div className="w-full h-full flex items-center justify-center text-gray-400 text-xs">No image</div>
+                        )}
+                      </div>
+                      <div className="flex flex-col">
+                        {item.productCode && <span className="text-xs text-gray-500 font-medium mb-1">Mã: {item.productCode}</span>}
+                        <Link to={`/products/${item.id}`} className="font-bold text-gray-900 hover:text-brand-orange text-lg line-clamp-2">
+                          {item.name}
+                        </Link>
+                        {/* Variants Display */}
+                        {(item.selectedColor || item.selectedSize) && (
+                          <div className="flex flex-wrap gap-2 mt-2">
+                            {item.selectedColor && (
+                              <span className="inline-flex items-center gap-1.5 text-xs font-medium bg-gray-100 px-2 py-1 rounded text-gray-700 shadow-sm border border-gray-200 cursor-default" title="Màu sắc đã chọn">
+                                <span className="w-2.5 h-2.5 rounded-full border border-gray-300" style={{ backgroundColor: item.selectedColor.hex }}></span>
+                                {item.selectedColor.name}
+                              </span>
+                            )}
+                            {item.selectedSize && (
+                              <span className="inline-flex items-center text-xs font-bold bg-gray-100 px-2.5 py-1 rounded text-gray-700 shadow-sm border border-gray-200 cursor-default" title="Kích thước / Độ dày">
+                                {item.selectedSize}
+                              </span>
+                            )}
+                          </div>
+                        )}
+                        {item.category && <span className="text-sm text-gray-500 mt-1">{item.category}</span>}
+                      </div>
+                    </div>
+
+                    <div className="col-span-1 md:col-span-2 flex md:justify-center items-center">
+                      <span className="md:hidden text-gray-500 w-24">Đơn giá:</span>
+                      <span className="font-semibold text-gray-700">
+                        {item.price ? `${item.price.toLocaleString("vi-VN")} đ` : "Liên hệ"}
+                      </span>
+                    </div>
+
+                    <div className="col-span-1 md:col-span-2 flex md:justify-center items-center">
+                      <span className="md:hidden text-gray-500 w-24">Số lượng:</span>
+                      <div className="flex items-center border border-gray-300 rounded overflow-hidden w-32">
+                        <button onClick={() => updateQuantity(item.cartId, item.quantity - 1)} disabled={item.quantity <= 1} className="w-8 h-8 flex items-center justify-center hover:bg-gray-100 disabled:opacity-50 text-gray-600 transition-colors">
+                          <Minus size={14} />
+                        </button>
+                        <input type="number" readOnly value={item.quantity} className="w-16 h-8 text-center font-medium border-x border-gray-300 focus:outline-none" />
+                        <button onClick={() => updateQuantity(item.cartId, item.quantity + 1)} className="w-8 h-8 flex items-center justify-center hover:bg-gray-100 text-gray-600 transition-colors">
+                          <Plus size={14} />
+                        </button>
+                      </div>
+                    </div>
+
+                    <div className="col-span-1 md:col-span-3 flex justify-between md:justify-end items-center shrink-0">
+                      <span className="md:hidden text-gray-500 w-24">Tạm tính:</span>
+                      <span className="font-bold text-brand-orange text-lg whitespace-nowrap">
+                        {item.price ? `${(item.price * item.quantity).toLocaleString("vi-VN")} đ` : "Liên hệ"}
+                      </span>
+
+                      <button onClick={() => removeFromCart(item.cartId)} className="hidden md:block ml-4 text-gray-400 hover:text-red-500 transition-colors shrink-0" title="Xóa sản phẩm">
+                        <Trash2 size={20} />
+                      </button>
+                    </div>
                   </div>
-                </div>
-              ))}
+                ))}
               </div>
               {/* Bóng mờ báo hiệu còn nội dung bên dưới (Fade out hint) */}
               {cartItems.length > 3 && (
@@ -246,49 +246,49 @@ export function CartPage() {
             <form className="space-y-4" onSubmit={confirmCheckout}>
               <div>
                 <label className="block text-sm font-medium text-gray-700 mb-1">Họ và tên *</label>
-                <input 
-                  type="text" 
+                <input
+                  type="text"
                   name="name"
                   value={customerInfo.name}
                   onChange={handleCustomerChange}
-                  required 
-                  className="w-full border-gray-300 rounded-lg shadow-sm focus:ring-brand-orange focus:border-brand-orange p-2.5 border" 
-                  placeholder="Nguyễn Văn A" 
+                  required
+                  className="w-full border-gray-300 rounded-lg shadow-sm focus:ring-brand-orange focus:border-brand-orange p-2.5 border"
+                  placeholder="Nguyễn Văn A"
                 />
               </div>
               <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
                 <div>
                   <label className="block text-sm font-medium text-gray-700 mb-1">Số điện thoại / Zalo *</label>
-                  <input 
-                    type="tel" 
+                  <input
+                    type="tel"
                     name="phone"
                     value={customerInfo.phone}
                     onChange={handleCustomerChange}
-                    required 
-                    className="w-full border-gray-300 rounded-lg shadow-sm focus:ring-brand-orange focus:border-brand-orange p-2.5 border" 
-                    placeholder="090..." 
+                    required
+                    className="w-full border-gray-300 rounded-lg shadow-sm focus:ring-brand-orange focus:border-brand-orange p-2.5 border"
+                    placeholder="090..."
                   />
                 </div>
                 <div>
                   <label className="block text-sm font-medium text-gray-700 mb-1">Email (nếu có)</label>
-                  <input 
-                    type="email" 
+                  <input
+                    type="email"
                     name="email"
                     value={customerInfo.email}
                     onChange={handleCustomerChange}
-                    className="w-full border-gray-300 rounded-lg shadow-sm focus:ring-brand-orange focus:border-brand-orange p-2.5 border" 
-                    placeholder="email@example.com" 
+                    className="w-full border-gray-300 rounded-lg shadow-sm focus:ring-brand-orange focus:border-brand-orange p-2.5 border"
+                    placeholder="email@example.com"
                   />
                 </div>
               </div>
               <div>
                 <label className="block text-sm font-medium text-gray-700 mb-1">Ghi chú thêm</label>
-                <textarea 
-                  rows="3" 
+                <textarea
+                  rows="3"
                   name="note"
                   value={customerInfo.note}
                   onChange={handleCustomerChange}
-                  className="w-full border-gray-300 rounded-lg shadow-sm focus:ring-brand-orange focus:border-brand-orange p-2.5 border" 
+                  className="w-full border-gray-300 rounded-lg shadow-sm focus:ring-brand-orange focus:border-brand-orange p-2.5 border"
                   placeholder="Ví dụ: Cần cắt giùm tấm Mica kích thước 1x2m..."
                 ></textarea>
               </div>
