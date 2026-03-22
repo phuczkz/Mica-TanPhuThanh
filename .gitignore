@@ -10,6 +10,7 @@
 
 # production
 /build
+/dist
 
 # misc
 .DS_Store
@@ -32,6 +33,7 @@ node_modules/
 
 # Production
 /build
+/dist
 
 # Environment variables
 .env
