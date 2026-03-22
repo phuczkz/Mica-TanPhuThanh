@@ -24,7 +24,7 @@ export function HomePage() {
         {/* We can use a pattern or image here in the future */}
         <div className="max-w-7xl mx-auto px-4 py-20 lg:py-32 relative z-10 flex flex-col items-center text-center">
           <h1 className="text-4xl md:text-6xl font-extrabold tracking-tight mb-6">
-            TỔNG KHO VẬT TƯ QUẢNG CÁO <br className="hidden md:block"/> <span className="text-brand-yellow">TÂN PHÚ THÀNH</span>
+            TỔNG KHO VẬT TƯ QUẢNG CÁO <br className="hidden md:block" /> <span className="text-brand-yellow">TẤN PHÚ THÀNH</span>
           </h1>
           <p className="text-lg md:text-xl text-gray-200 mb-10 max-w-2xl">
             Chuyên cung cấp sĩ & lẻ Tấm ALU, MICA, Formex, Decal... Chất lượng hàng đầu, giá cả tại xưởng, giao hàng nhanh chóng nội thành và toàn quốc.
@@ -43,7 +43,8 @@ export function HomePage() {
       {/* Features - Horizontal Static on Desktop, Auto-scroll on Mobile/Tablet */}
       <section className="bg-white py-12 border-b overflow-hidden">
         <div className="max-w-7xl mx-auto px-4">
-          <style dangerouslySetInnerHTML={{ __html: `
+          <style dangerouslySetInnerHTML={{
+            __html: `
             @keyframes marquee {
               0% { transform: translateX(0); }
               100% { transform: translateX(-50%); }
@@ -88,7 +89,7 @@ export function HomePage() {
               }
             }
           `}} />
-          
+
           <div className="relative">
             <div className="animate-marquee">
               {/* Render features twice for seamless loop, hide second set on desktop */}
@@ -128,7 +129,7 @@ export function HomePage() {
               <span className="absolute -bottom-3 left-1/2 transform -translate-x-1/2 w-16 h-1 bg-brand-orange rounded"></span>
             </h2>
           </div>
-          
+
           {loading ? (
             <div className="flex justify-center items-center h-40">
               <div className="animate-spin rounded-full h-10 w-10 border-4 border-brand-orange border-t-transparent"></div>
@@ -137,7 +138,7 @@ export function HomePage() {
             <CategorySection products={products} />
           ) : (
             <div className="text-center text-gray-500 py-10 bg-white rounded-lg shadow-sm border">
-               Chưa có sản phẩm nào.
+              Chưa có sản phẩm nào.
             </div>
           )}
         </div>
